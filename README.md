@@ -22,6 +22,13 @@
 
 Everything is backed by **fixtures**, so the demo works with no network, no model key and no PRISM key. With keys, the same run emits real **Nicrron** calls and **PRISM** traces.
 
+## Team access
+
+- **Repo:** https://github.com/muen-dev/moneyfinder-claims-desk
+- **Branches:** `feat/thuy-onboarding-prism` · `feat/kenan-desk-books` · `feat/richard-ledger-agent`
+- **Docs:** [PRD](docs/PRD.md) · [Epic](docs/EPIC.md) · [Contract](docs/CONTRACT.md) · [Team plan](docs/TEAM_PLAN.md) · [Architecture](docs/ARCHITECTURE.md)
+- **Live demo:** run `make run` at http://127.0.0.1:8000, or ask Thuy for the current temporary tunnel link.
+
 ## Screenshots
 
 ![Claims Desk](docs/proofs/dashboard.png)
