@@ -14,7 +14,7 @@
 |---|---|---|
 | `/` | Landing page + public nav | static |
 | `/signin` | Demo auth (email only), session, guarded routes | demo user |
-| `/onboarding` | 3 phases: Gmail consent → profile review → benefit cards → form approval → progress | onboarding fixture + inbox |
+| `/onboarding` | 3 phases: Gmail consent → profile review → benefit cards → **real official PDF fill** → approval → progress | onboarding fixture + inbox + `fixtures/forms/` |
 | `/dashboard` | Four-column claims desk: Found / In process / Approved / Paid; totals; next actions | applications fixture |
 | `/applications/<id>` | Amount, evidence, event log, allowed status transitions | fixture + status machine |
 | `/eligibility` | 7 programs with verdicts, citations, `as_of`; WOTC flagged expired | cached official-page excerpts |
@@ -23,6 +23,16 @@
 | `/settings` | integration status, modes, reset demo | env + fixtures |
 
 Everything is backed by **fixtures**, so the demo works with no network, no model key and no PRISM key. With keys, the same run emits real **Nicrron** calls and **PRISM** traces.
+
+## Reuse from `thetradingdoc/moneyfinder`
+
+| Piece | Richard's source | Status in this app |
+|---|---|---|
+| Gmail OAuth + read-only scrape | `research/business/.../gmail/`, `email_facts.py` | **Not ported** (needs Google OAuth client + callback routes); synthetic inbox is used for the demo |
+| Benefits catalog / official-page crawl | `research/legal/` (`legal-research run --search`) | **Fixtures today**; catalog/search can replace `programs.json` |
+| Official PDF fill | `form-filling/demo_forms.py` (pypdf) | **Ported** → `app/services/pdf_fill.py`, blank PDFs in `fixtures/forms/` |
+| Anchor browser fill + live view | `form-filling/fill_pdf.py` | Not ported (needs `ANCHOR_API_KEY`); useful for the recording |
+| Synthetic demo business/inbox | `demo/gowanus-kettle/` | Reused as this app's fixtures |
 
 ## Team access
 
@@ -95,7 +105,7 @@ Browser (Jinja pages + JSON API)
 | Tool | Status | Detail |
 |---|---|---|
 | **Nicrron** (required) | verified | `https://api.nicrron.ai/v1`, `nicrron/auto`; live call verified; $260 credits |
-| **PRISM** (required) | connected | project `6e1051f7-8dce-498f-9846-d6acaa087737`; 12 live traces delivered; alert rule active |
+| **PRISM** (required) | connected | project `6e1051f7-8dce-498f-9846-d6acaa087737`; span-level traces: 1 agent + 12 tool + 1 LLM per run; alert rule active. Evaluation key still needs configuring in PRISM. |
 | **ElevenLabs** (optional) | P2 | spoken claims summary; not in the demo spine |
 
 PRISM proof plan: 50+ runs, a 12-step session, the alert firing on a failed tool/partial run, a 3+ failed-run root-cause cluster, and v2 passing the same inputs. Run History only shows a PRISM link after verification — never a fabricated one.

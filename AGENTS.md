@@ -6,6 +6,7 @@ This project sends traces to PRISM. Env vars: `PRISMTRACE_API_KEY`, `PRISMTRACE_
 
 Tracing is wired at:
 - `app/services/prism.py` — HTTP emitter, one trace per analysis/onboarding step
+- `app/services/tracing.py` — OpenTelemetry spans → PRISM (`/api/spans/ingest`)
 - `app/services/orchestrator.py` — 12-step analysis run (`agent_id=moneyfinder-backoffice`)
 - `app/routes/flow.py` — 11-step onboarding flow
 - `app/routes/api.py` — onboarding phase APIs
@@ -13,4 +14,4 @@ Tracing is wired at:
 
 **Standing rule.** Whenever you add or change an agent, chain, graph, tool, retriever, or any entry point that calls a model, wire it to PRISM before you finish. Unwired code is invisible in the dashboard. If you are unsure whether something is covered, assume it is not and wire it.
 
-**Current limitation (be honest about it).** The emitter sends one HTTP trace per step with a summary. It does **not** emit OpenTelemetry spans, so PRISM `spans`, `tool_calls`, and token/cost fields are empty. If a demo needs the "Steps / tool calls" view, add SDK or OTel span instrumentation and verify it in PRISM; do not claim the HTTP traces capture tool calls.
+**Instrumentation status.** Tool/model spans are wired through `app/services/tracing.py` using the PRISM SDK OpenTelemetry exporter (`/api/spans/ingest`); `app/services/prism.py` remains the HTTP fallback for environments without the SDK. An analysis run emits one agent span + 12 tool spans + 1 LLM span with token usage; verify with `GET /api/spans/{trace_id}` after a run. Onboarding emits one tool span per phase step. If PRISM evaluation is enabled, also confirm the project eval-config has a valid key; an unset eval key makes traces look flagged even when the app is healthy.

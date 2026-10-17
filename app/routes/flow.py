@@ -3,10 +3,12 @@ from __future__ import annotations
 
 import time
 
-from flask import Blueprint, current_app, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, send_file, session, url_for
 
 from ..auth import current_user, login_required
+from ..services import pdf_fill
 from ..services.prism import Prism
+from ..services.tracing import annotate
 
 bp = Blueprint("flow", __name__)
 
@@ -20,6 +22,15 @@ def store():
 def emit(step: str, tool: str, status: str = "succeeded", summary: str = "") -> None:
     run_id = session.get("onboarding_run_id")
     if not run_id or current_app.config.get("TESTING"):
+        return
+    tracing = current_app.extensions.get("tracing")
+    if tracing and tracing.is_enabled():
+        with tracing.span(
+            step, run_id, span_type="tool", tool=tool,
+            input_text=f"onboarding · {step}", output_text=summary or step,
+        ) as span:
+            annotate(span, status="ok" if status == "succeeded" else status,
+                     output_text=summary or step)
         return
     Prism().emit(
         session_id=run_id,
@@ -175,6 +186,21 @@ def benefit_submit(benefit_id: str):
     emit("status_check", "poll_status", "succeeded", "Submitted — agency review")
     flash(f"Submitted (mock). Confirmation {app.get('confirmation_id')}.")
     return redirect(url_for("flow.progress", app_id=app["id"]))
+
+
+@bp.get("/onboarding/benefits/<benefit_id>/pdf")
+@login_required
+def benefit_pdf(benefit_id: str):
+    s = store()
+    benefit = s.benefit(benefit_id)
+    if benefit is None:
+        return ("Benefit not found", 404)
+    try:
+        path = pdf_fill.build(benefit_id, s)
+    except pdf_fill.PdfFillError as exc:
+        flash(f"The official PDF could not be filled: {exc}")
+        return redirect(url_for("flow.benefit_detail", benefit_id=benefit_id))
+    return send_file(path, as_attachment=True, download_name=f"{benefit['form']}-filled.pdf")
 
 
 @bp.get("/onboarding/progress/<app_id>")

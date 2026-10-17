@@ -5,9 +5,11 @@ from flask import Blueprint, current_app, jsonify, request, send_file
 
 from ..services import applications, eligibility, evidence, ledger, packet
 from ..services.prism import Prism
+from ..services.tracing import annotate
 from ..services.nicrron import Nicrron
 from ..services.orchestrator import start_run
 from ..services.prism import Prism
+from ..services.tracing import annotate
 
 bp = Blueprint("api", __name__)
 
@@ -176,9 +178,16 @@ def voice_summary():
 def _emit(step: str, tool: str, summary: str = "") -> None:
     from flask import session
     run_id = session.get("onboarding_run_id")
-    if run_id and not current_app.config.get("TESTING"):
-        Prism().emit(session_id=run_id, step=step, tool=tool, status="ok",
-                     input_summary=f"onboarding · {step}", output_summary=summary or step)
+    if not run_id or current_app.config.get("TESTING"):
+        return
+    tracing = current_app.extensions.get("tracing")
+    if tracing and tracing.is_enabled():
+        with tracing.span(step, run_id, span_type="tool", tool=tool,
+                          input_text=f"onboarding · {step}", output_text=summary or step) as span:
+            annotate(span, status="ok", output_text=summary or step)
+        return
+    Prism().emit(session_id=run_id, step=step, tool=tool, status="ok",
+                 input_summary=f"onboarding · {step}", output_summary=summary or step)
 
 
 @bp.get("/onboarding/profile")

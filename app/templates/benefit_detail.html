@@ -65,6 +65,8 @@
           <label class="check-row"><input type="checkbox" name="approve"> I reviewed the form and approve this submission.</label>
           <button class="btn primary full" type="submit">Approve &amp; send <span class="arrow">→</span></button>
         </form>
+        <a class="btn ghost full pdf-download" href="{{ url_for('flow.benefit_pdf', benefit_id=benefit.id) }}">Download filled official PDF</a>
+        <p class="fine-print">The download is the real {{ benefit.form }} AcroForm filled from your profile — no submission.</p>
         <p class="fine-print">Mock submission only. Not tax advice. The agency is never contacted.</p>
         <a class="back-link" href="{{ url_for('flow.benefits') }}">← Back to benefits</a>
       </aside>

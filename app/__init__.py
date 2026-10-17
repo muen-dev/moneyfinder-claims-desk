@@ -6,6 +6,7 @@ from flask import Flask
 from .auth import current_user
 from .config import Config
 from .store import Store
+from .services.tracing import Tracing
 from .util import money as _money
 
 
@@ -16,6 +17,7 @@ def create_app() -> Flask:
     store = Store(root=app.config["ROOT"])
     store.load()
     app.extensions["store"] = store
+    app.extensions["tracing"] = Tracing(app)
 
     from .routes.api import bp as api_bp
     from .routes.flow import bp as flow_bp
@@ -31,6 +33,12 @@ def create_app() -> Flask:
         return (status or "").replace("_", " ").title()
 
     app.jinja_env.filters["status_label"] = status_label
+
+    @app.teardown_appcontext
+    def _flush_tracing(exc=None):
+        tracing = app.extensions.get("tracing")
+        if tracing:
+            tracing.flush()
 
     @app.context_processor
     def inject_globals():

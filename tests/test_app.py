@@ -220,3 +220,11 @@ def test_demo_reset(client):
     assert client.post("/api/demo/reset").get_json()["ok"] is True
     apps = client.get("/api/applications").get_json()["applications"]
     assert any(a["status"] == "MATCH_FOUND" for a in apps["found"])
+
+
+def test_filled_official_pdf_downloads(client):
+    _reach_benefits(client)
+    r = client.get("/onboarding/benefits/ben_it636/pdf")
+    assert r.status_code == 200
+    assert r.data.startswith(b"%PDF")
+    assert len(r.data) > 20_000
