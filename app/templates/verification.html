@@ -1,4 +1,5 @@
 {% extends "base_wizard.html" %}
+{% from "_components.html" import spinner %}
 {% block title %}Verify business · MoneyFinder{% endblock %}
 {% block content %}
 <section class="wizard">
@@ -14,7 +15,7 @@
 
   {% if not verified %}
   <div class="wizard-panel narrow center-panel">
-    <div class="agent-spinner" role="status" aria-label="Verifying business records"></div>
+    <div class="spinner-wrap">{{ spinner("Verifying business records", "lg") }}</div>
     <p class="eyebrow">Step 1 of 3 · verification</p>
     <h1>Verifying the business.</h1>
     <p class="lede">The agent is checking the NYS SLA license, NYS DOS standing, NYC zoning/BBL and federal tax classification against the synthetic registry snapshot.</p>

@@ -1,0 +1,3 @@
+{% macro spinner(label='Loading', size='md') -%}
+<span class="spinner spinner-{{ size }}" role="status" aria-label="{{ label }}"><span class="sr-only">{{ label }}</span></span>
+{%- endmacro %}

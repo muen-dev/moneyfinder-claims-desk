@@ -648,3 +648,13 @@ select:focus, input:focus { outline: 2px solid var(--ink); outline-offset: 1px; 
 .hero-photo-name { font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
 .hero-photo-role { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.82); }
 @media (max-width: 1000px) { .hero-photo { max-width: 640px; } }
+
+/* ---------- spinner component ---------- */
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -3px; }
+.spinner-sm { width: 12px; height: 12px; border-width: 2px; }
+.spinner-lg { width: 40px; height: 40px; border-width: 3px; color: var(--ink); }
+.spinner-wrap { display: flex; justify-content: center; margin: 0 0 24px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.sso-btn.is-loading { opacity: .72; cursor: wait; }
+.pdf-viewer-status .spinner { margin-right: 4px; color: #f4f1ea; }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 1.6s; } }

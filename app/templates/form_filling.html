@@ -27,7 +27,7 @@
       <div class="pdf-viewer-wrap">
         <div class="pdf-viewer-stage" id="viewerContainer">
           <div id="viewer" class="pdfViewer"></div>
-          <div class="pdf-viewer-status" id="pdf-status">Loading the official {{ benefit.form }} PDF…</div>
+          <div class="pdf-viewer-status" id="pdf-status"><span class="spinner spinner-sm" aria-hidden="true"></span> Loading the official {{ benefit.form }} PDF…</div>
         </div>
       </div>
       <aside class="agent-fill-side">
@@ -61,6 +61,9 @@
   const log = { f1: document.getElementById('f1'), f2: document.getElementById('f2'), f3: document.getElementById('f3'),
                 f4: document.getElementById('f4'), f5: document.getElementById('f5') };
   const sleep = ms => new Promise(r => setTimeout(r, ms));
+  function setStatus(text, spinning = false) {
+    statusEl.innerHTML = (spinning ? '<span class="spinner spinner-sm" aria-hidden="true"></span> ' : '') + text;
+  }
 
   async function findField(id, pageNumber) {
     for (let i = 0; i < 60; i += 1) {
@@ -151,14 +154,14 @@
       }
       await mark(el, false);
       progress.textContent = `${i + 1} / ${plan.length} fields`;
-      statusEl.textContent = `Typing ${f.name}`;
+      setStatus(`Typing ${f.name}`);
     }
 
     log.f5.classList.add('done');
-    statusEl.textContent = 'Saving the filled PDF…';
+    setStatus('Saving the filled PDF…', true);
     await request;
     progress.textContent = 'PDF filled';
-    statusEl.textContent = 'Filled PDF saved. Opening review…';
+    setStatus('Filled PDF saved. Opening review…', true);
     await sleep(600);
     location.href = '/onboarding/benefits/' + BENEFIT_ID;
   }

@@ -28,4 +28,13 @@
     <a class="back-link" href="{{ url_for('flow.landing') }}">← Back to home</a>
   </div>
 </section>
+<script>
+  const form = document.querySelector('.auth-form');
+  form?.addEventListener('submit', () => {
+    const btn = form.querySelector('.sso-btn');
+    btn.disabled = true;
+    btn.classList.add('is-loading');
+    btn.innerHTML = '<span class="spinner spinner-sm" aria-hidden="true"></span> Connecting to Google…';
+  });
+</script>
 {% endblock %}

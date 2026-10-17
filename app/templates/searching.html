@@ -1,4 +1,5 @@
 {% extends "base_wizard.html" %}
+{% from "_components.html" import spinner %}
 {% block title %}Finding benefits · MoneyFinder{% endblock %}
 {% block content %}
 <section class="wizard">
@@ -13,7 +14,7 @@
   </div>
 
   <div class="wizard-panel narrow center-panel">
-    <div class="agent-spinner" role="status" aria-label="Agent is searching public benefit programs"></div>
+    <div class="spinner-wrap">{{ spinner("Agent is searching public benefit programs", "lg") }}</div>
     <h1>Searching public programs…</h1>
     <p class="lede">The agent is reading official agency pages and matching their requirements to your profile. Every result will cite its source.</p>
     <ul class="agent-log" id="agent-log">
