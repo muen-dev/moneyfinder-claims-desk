@@ -18,10 +18,30 @@
     <p class="lede">The agent crawled the synthetic mailbox, classified every message, and extracted sourced facts. Review what it found before building the profile.</p>
 
     <div class="crawl-stats">
-      <div><strong>{{ scan.stats.messages }}</strong><span>messages read</span></div>
-      <div><strong>{{ scan.stats.facts }}</strong><span>facts extracted</span></div>
-      <div><strong class="coral">{{ scan.stats.conflicts }}</strong><span>conflicts found</span></div>
-      <div><strong>{{ scan.stats.purchases }}</strong><span>purchases queued</span></div>
+      <div class="crawl-stat">
+        <span class="kpi-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/></svg></span>
+        <strong>{{ scan.stats.messages }}</strong><span>messages read</span>
+      </div>
+      <div class="crawl-stat">
+        <span class="kpi-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.4 5.1L20 9l-4 4 1 6-5-2.7L7 19l1-6-4-4 5.6-.9z"/></svg></span>
+        <strong>{{ scan.stats.facts }}</strong><span>facts extracted</span>
+      </div>
+      <button class="crawl-stat clickable" id="conflict-kpi" type="button">
+        <span class="kpi-icon warn" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 2.5 20h19z"/><path d="M12 9v5"/><path d="M12 17h.01"/></svg></span>
+        <strong class="coral" id="conflict-count">{{ scan.stats.conflicts }}</strong><span>conflicts found</span>
+        <em>Resolve →</em>
+      </button>
+      <div class="crawl-stat">
+        <span class="kpi-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></span>
+        <strong>{{ scan.stats.purchases }}</strong><span>purchases queued</span>
+      </div>
+      {% if scan.documents %}
+      <button class="crawl-stat clickable" id="docs-kpi" type="button">
+        <span class="kpi-icon docs" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2h9l4 4v16H6z"/><path d="M15 2v5h5"/><path d="M9 12h6M9 16h6"/></svg></span>
+        <strong>{{ scan.documents|length }}</strong><span>documents found</span>
+        <em>View files →</em>
+      </button>
+      {% endif %}
     </div>
 
     <div class="crawl-categories">
@@ -62,11 +82,128 @@
   </div>
   <p class="wizard-foot">Read-only synthetic mailbox · every extracted fact will show the email that proves it</p>
 </section>
+
+<div class="modal-backdrop" id="conflict-modal" hidden>
+  <div class="modal-card conflict-modal" role="dialog" aria-modal="true" aria-labelledby="conflict-title">
+    <div class="modal-head">
+      <div><p class="eyebrow">Conflicts</p><h2 id="conflict-title">Resolve the gaps.</h2></div>
+      <button class="modal-close" type="button" data-close="conflict-modal" aria-label="Close">×</button>
+    </div>
+    <p class="modal-lede">The agent preserved these differences instead of guessing. Pick the value to trust — it will be written into the profile.</p>
+    <div id="conflict-list">
+      {% for c in scan.conflicts %}
+      <div class="conflict-item" data-field="{{ c.field }}">
+        <strong>{{ c.label }}</strong>
+        <p>{{ c.note }}</p>
+        <div class="conflict-options">
+          {% for opt in c.options %}
+          <label><input type="radio" name="conflict_{{ c.field }}" value="{{ opt|e }}"> {{ opt }}</label>
+          {% endfor %}
+        </div>
+        <button class="btn primary small resolve-btn" type="button" data-field="{{ c.field }}">Save resolution</button>
+      </div>
+      {% endfor %}
+      <p class="conflict-empty" id="conflict-empty" {% if scan.conflicts %}hidden{% endif %}>All conflicts resolved. The profile is ready for the builder.</p>
+    </div>
+  </div>
+</div>
+
+{% if scan.documents %}
+<div class="modal-backdrop" id="docs-modal" hidden>
+  <div class="modal-card docs-modal-card" role="dialog" aria-modal="true" aria-labelledby="docs-title">
+    <div class="modal-head">
+      <div><p class="eyebrow">Documents found</p><h2 id="docs-title">Files the agent can use.</h2></div>
+      <button class="modal-close" type="button" data-close="docs-modal" aria-label="Close">×</button>
+    </div>
+    <p class="modal-lede">{{ scan.documents|length }} synthetic PDFs found in the mailbox. Click any document to preview it or download the PDF.</p>
+    <div class="docs-gallery">
+      {% for d in scan.documents %}
+      <figure class="doc-card">
+        <button class="doc-open" type="button" data-pdf="{{ d.pdf }}" data-title="{{ d.title|e }}" data-type="{{ d.type|e }}" data-thumb="{{ d.thumb }}">
+          <img src="{{ d.thumb }}" alt="{{ d.title|e }} preview" loading="eager">
+          <span class="doc-zoom">Open preview</span>
+        </button>
+        <figcaption>
+          <span class="doc-type">{{ d.type }}</span>
+          <strong>{{ d.title }}</strong>
+          <small>{{ d.source }} · {{ d.date }}</small>
+          <a class="doc-download" href="{{ d.pdf }}" download>Download PDF ↓</a>
+        </figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="doc-lightbox" id="doc-lightbox" hidden>
+  <div class="doc-lightbox-card" role="dialog" aria-modal="true" aria-labelledby="doc-lightbox-title">
+    <button class="modal-close doc-lightbox-close" type="button" id="doc-lightbox-close" aria-label="Close preview">×</button>
+    <div class="doc-lightbox-preview"><img id="doc-lightbox-img" src="" alt=""></div>
+    <div class="doc-lightbox-meta">
+      <span class="doc-type" id="doc-lightbox-type"></span>
+      <h3 id="doc-lightbox-title"></h3>
+      <a class="btn primary small" id="doc-lightbox-download" href="#" download>Download PDF ↓</a>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 {% block scripts %}
 <script>
+  const conflictModal = document.getElementById('conflict-modal');
+  const conflictKpi = document.getElementById('conflict-kpi');
+  const conflictCount = document.getElementById('conflict-count');
+  const conflictEmpty = document.getElementById('conflict-empty');
+  const docsModal = document.getElementById('docs-modal');
+  const docsKpi = document.getElementById('docs-kpi');
+  const docLightbox = document.getElementById('doc-lightbox');
+
+  const show = (el) => { if (el) el.hidden = false; };
+  const hide = (el) => { if (el) el.hidden = true; };
+
+  conflictKpi?.addEventListener('click', () => show(conflictModal));
+  docsKpi?.addEventListener('click', () => show(docsModal));
+  document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => hide(document.getElementById(btn.dataset.close))));
+  [conflictModal, docsModal, docLightbox].forEach(overlay => overlay?.addEventListener('click', event => { if (event.target === overlay) hide(overlay); }));
+
+  document.querySelectorAll('.resolve-btn').forEach(btn => btn.addEventListener('click', async () => {
+    const item = btn.closest('.conflict-item');
+    const checked = item.querySelector('input[type="radio"]:checked');
+    if (!checked) { btn.textContent = 'Pick an option first'; setTimeout(() => { btn.textContent = 'Save resolution'; }, 1400); return; }
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      const r = await fetch('/api/onboarding/conflicts/resolve', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ field: btn.dataset.field, resolution: checked.value }),
+      });
+      if (!r.ok) throw new Error('resolve');
+      const data = await r.json();
+      item.remove();
+      conflictCount.textContent = data.remaining;
+      if (data.remaining === 0) conflictEmpty.hidden = false;
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Try again';
+    }
+  }));
+
+  document.querySelectorAll('.doc-open').forEach(btn => btn.addEventListener('click', () => {
+    document.getElementById('doc-lightbox-img').src = btn.dataset.thumb;
+    document.getElementById('doc-lightbox-img').alt = btn.dataset.title + ' preview';
+    document.getElementById('doc-lightbox-title').textContent = btn.dataset.title;
+    document.getElementById('doc-lightbox-type').textContent = btn.dataset.type;
+    document.getElementById('doc-lightbox-download').href = btn.dataset.pdf;
+    show(docLightbox);
+  }));
+  document.getElementById('doc-lightbox-close')?.addEventListener('click', () => hide(docLightbox));
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { hide(conflictModal); hide(docsModal); hide(docLightbox); }
+  });
   setTimeout(() => {
-    document.getElementById('crawl-hint').textContent = 'Ready — review the crawl or continue.';
+    const hint = document.getElementById('crawl-hint');
+    if (hint) hint.textContent = 'Ready — review the crawl or continue.';
   }, 1600);
 </script>
 {% endblock %}

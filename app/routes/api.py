@@ -339,3 +339,21 @@ def observability():
             "checked_at": probe.get("at") or last.get("at"),
         },
     )
+
+
+@bp.post("/onboarding/conflicts/resolve")
+def onboarding_resolve_conflict():
+    s = store()
+    data = request.get_json(silent=True) or {}
+    field = (data.get("field") or "").strip()
+    resolution = (data.get("resolution") or "").strip()
+    if not field or not resolution:
+        return jsonify({"error": {"code": "invalid_resolution", "message": "field and resolution are required"}}), 400
+    valid = {c.get("field") for c in s.profile.get("conflicts", [])}
+    if field not in valid:
+        return jsonify({"error": {"code": "unknown_conflict", "message": field}}), 404
+    s.resolve_conflict(field, resolution)
+    resolved = s.onboarding.get("resolved_conflicts", {})
+    remaining = [c for c in s.profile.get("conflicts", []) if c.get("field") not in resolved]
+    _emit("resolve_conflict", "resolve_profile_conflict", f"{field}: {resolution}")
+    return ok(field=field, resolution=resolution, resolved=len(resolved), remaining=len(remaining))

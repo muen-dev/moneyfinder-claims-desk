@@ -3,6 +3,9 @@ from __future__ import annotations
 
 import re
 from collections import Counter
+from pathlib import Path
+
+from ..util import load_json
 
 CATEGORIES = ["tax-credit", "audit", "legal", "administrative", "unrelated"]
 
@@ -48,17 +51,23 @@ def scan(store) -> dict:
     profile = store.profile
     facts = profile.get("facts", [])
     conflicts = profile.get("conflicts", [])
+    resolved = store.onboarding.get("resolved_conflicts", {}) or {}
+    open_conflicts = [c for c in conflicts if c.get("field") not in resolved]
+    docs = [d for d in (load_json(Path(store.root) / "fixtures" / "docs.json", []) or []) if d.get("found", True)]
     msgs = messages(store)
     counts = Counter(m["category"] for m in msgs)
     return {
         "business": store.business,
         "messages": msgs,
         "facts": facts,
-        "conflicts": conflicts,
+        "conflicts": open_conflicts,
+        "resolved_conflicts": resolved,
+        "documents": docs,
         "stats": {
             "messages": len(msgs),
             "facts": len(facts),
-            "conflicts": len(conflicts),
+            "conflicts": len(open_conflicts),
+            "documents": len(docs),
             "purchases": len(store.ledger.get("transactions", [])),
             "categories": dict(counts),
             "missing_attachments": sum(1 for m in msgs if m.get("attachment_state") == "missing"),

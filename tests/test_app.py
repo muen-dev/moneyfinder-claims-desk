@@ -365,3 +365,26 @@ def test_onboarding_pages_include_observability_card(client):
     assert b"Agent observability" in page.data
     assert b"PRISM" in page.data
     assert b"Nicrron" in page.data
+
+
+def test_crawl_page_lists_documents(client):
+    login(client)
+    client.post("/onboarding/connect")
+    page = client.get("/onboarding/crawl")
+    assert page.status_code == 200
+    assert b"documents found" in page.data
+    assert b"llc-articles.pdf" in page.data
+
+
+def test_conflict_resolution_endpoint(client, app):
+    login(client)
+    client.post("/onboarding/connect")
+    before = client.application.extensions["store"].onboarding.get("resolved_conflicts", {})
+    assert before == {}
+    d = client.post("/api/onboarding/conflicts/resolve", json={
+        "field": "headcount", "resolution": "Use 14 (year end)",
+    }).get_json()
+    assert d["remaining"] == 2
+    assert app.extensions["store"].onboarding["resolved_conflicts"]["headcount"] == "Use 14 (year end)"
+    page = client.get("/onboarding/crawl")
+    assert b"2" in page.data

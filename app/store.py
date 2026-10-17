@@ -105,11 +105,16 @@ class Store:
             "verification_ready": False,
             "benefits_ready": False,
             "selected_benefit": None,
+            "resolved_conflicts": {},
             "filled_benefit": None,
             "filled_pdf": None,
             "filled_field_count": None,
             "application_id": None,
         })
+        self._persist()
+
+    def resolve_conflict(self, field: str, resolution: str) -> None:
+        self.onboarding.setdefault("resolved_conflicts", {})[field] = resolution
         self._persist()
 
     def mark_gmail_scanned(self) -> None:

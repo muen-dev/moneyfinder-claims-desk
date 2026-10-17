@@ -1,0 +1,57 @@
+[
+  {
+    "id": "doc_llc",
+    "title": "Articles of Organization",
+    "type": "LLC papers",
+    "date": "2021-04-15",
+    "source": "NYS Department of State",
+    "file": "llc-articles",
+    "pdf": "/static/docs/llc-articles.pdf",
+    "thumb": "/static/docs/thumbs/llc-articles.png",
+    "found": true
+  },
+  {
+    "id": "doc_w2",
+    "title": "2025 W-2 Summary",
+    "type": "Tax form",
+    "date": "2026-01-30",
+    "source": "Gusto payroll",
+    "file": "w2-summary",
+    "pdf": "/static/docs/w2-summary.pdf",
+    "thumb": "/static/docs/thumbs/w2-summary.png",
+    "found": true
+  },
+  {
+    "id": "doc_8850",
+    "title": "Form 8850 \u2014 WOTC",
+    "type": "Tax form",
+    "date": "2025-06-02",
+    "source": "IRS / NYS DOL",
+    "file": "form-8850",
+    "pdf": "/static/docs/form-8850.pdf",
+    "thumb": "/static/docs/thumbs/form-8850.png",
+    "found": true
+  },
+  {
+    "id": "doc_po",
+    "title": "Purchase Order PO-2025-0412",
+    "type": "PO / invoice",
+    "date": "2025-04-12",
+    "source": "Canning line vendor",
+    "file": "po-2025-0412",
+    "pdf": "/static/docs/po-2025-0412.pdf",
+    "thumb": "/static/docs/thumbs/po-2025-0412.png",
+    "found": true
+  },
+  {
+    "id": "doc_sla",
+    "title": "NYS SLA Micro Brewer License",
+    "type": "License",
+    "date": "2024-01-01",
+    "source": "NYS Liquor Authority",
+    "file": "sla-license",
+    "pdf": "/static/docs/sla-license.pdf",
+    "thumb": "/static/docs/thumbs/sla-license.png",
+    "found": true
+  }
+]
