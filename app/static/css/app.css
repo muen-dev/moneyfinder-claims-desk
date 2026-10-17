@@ -638,3 +638,13 @@ select:focus, input:focus { outline: 2px solid var(--ink); outline-offset: 1px; 
 .obs-chip { padding: 2px 5px; border-radius: 999px; background: rgba(43,168,74,.16); color: #8fe0a4; font-size: 9px; text-transform: uppercase; letter-spacing: .04em; }
 .obs-card.collapsed .obs-body { display: none; }
 @media (max-width: 760px) { .obs-card { width: 280px; right: 10px; bottom: 10px; } .obs-body { grid-template-columns: 1fr; } .obs-provider + .obs-provider { border-left: 0; border-top: 1px solid rgba(255,255,255,.1); margin-top: 8px; padding-top: 8px; } }
+
+/* ---------- hero persona photo ---------- */
+.hero-visual { position: relative; }
+.hero-photo { margin: 0; position: relative; border-radius: 22px; overflow: hidden; background: #d9d2c7; box-shadow: 0 22px 60px rgba(37, 30, 20, .16); aspect-ratio: 16 / 9; }
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-photo::after { content: ""; position: absolute; inset: auto 0 0 0; height: 42%; background: linear-gradient(to top, rgba(14, 27, 44, .62), transparent); pointer-events: none; }
+.hero-photo-caption { position: absolute; left: 18px; right: 18px; bottom: 16px; z-index: 1; display: flex; flex-direction: column; gap: 2px; color: #fff; }
+.hero-photo-name { font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
+.hero-photo-role { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.82); }
+@media (max-width: 1000px) { .hero-photo { max-width: 640px; } }
