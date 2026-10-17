@@ -38,7 +38,10 @@ with sync_playwright() as p:
 
     page.click("button:has-text('Allow read-only access')", no_wait_after=True)
     page.wait_for_url("**/onboarding/crawl", timeout=15000)
-    page.wait_for_timeout(900)
+    page.wait_for_timeout(500)
+    shot(page, "flow-crawl-loading.png")
+    page.wait_for_url("**/onboarding/crawl/review", timeout=15000)
+    page.wait_for_timeout(700)
     shot(page, "flow-crawl.png")
     page.click("a:has-text('Continue to profile builder')", no_wait_after=True)
     page.wait_for_url("**/onboarding/profile-building", timeout=15000)

@@ -65,6 +65,9 @@ def test_connect_consent_starts_crawl(client):
     crawl = client.get("/onboarding/crawl")
     assert crawl.status_code == 200
     assert b"Reading your inbox" in crawl.data
+    review = client.get("/onboarding/crawl/review")
+    assert review.status_code == 200
+    assert b"documents found" in review.data
 
 
 def test_profile_requires_crawl_first(client):
@@ -370,7 +373,7 @@ def test_onboarding_pages_include_observability_card(client):
 def test_crawl_page_lists_documents(client):
     login(client)
     client.post("/onboarding/connect")
-    page = client.get("/onboarding/crawl")
+    page = client.get("/onboarding/crawl/review")
     assert page.status_code == 200
     assert b"documents found" in page.data
     assert b"llc-articles.pdf" in page.data
@@ -386,5 +389,5 @@ def test_conflict_resolution_endpoint(client, app):
     }).get_json()
     assert d["remaining"] == 2
     assert app.extensions["store"].onboarding["resolved_conflicts"]["headcount"] == "Use 14 (year end)"
-    page = client.get("/onboarding/crawl")
+    page = client.get("/onboarding/crawl/review")
     assert b"2" in page.data

@@ -125,7 +125,19 @@ def connect_submit():
 @bp.get("/onboarding/crawl")
 @login_required
 def gmail_crawl():
-    """Explicit Gmail crawl stage: read the inbox, extract facts, find conflicts."""
+    """Gmail crawl spinner: the agent is reading the mailbox."""
+    s = store()
+    if not s.onboarding["gmail_connected"]:
+        return redirect(url_for("flow.connect"))
+    if s.onboarding.get("gmail_scanned"):
+        return redirect(url_for("flow.profile_review"))
+    return render_template("gmail_crawl_loading.html", step=1)
+
+
+@bp.get("/onboarding/crawl/review")
+@login_required
+def gmail_crawl_review():
+    """Crawl review: KPIs, conflicts, documents, then the profile builder."""
     s = store()
     if not s.onboarding["gmail_connected"]:
         return redirect(url_for("flow.connect"))
