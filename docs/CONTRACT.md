@@ -111,7 +111,7 @@ Demo auth is session-based; no password/OAuth. Guarded pages redirect to `/signi
 | GET | `/onboarding` | routes to current phase |
 | GET/POST | `/onboarding/connect` | consent + start phase 1 |
 | GET | `/onboarding/profile-loading` | spinner shell (calls profile API) |
-| GET/POST | `/onboarding/profile` | editable profile; required fields gate |
+| GET/POST | `/onboarding/profile` | editable profile; all fields optional in demo |
 | GET | `/onboarding/searching` | spinner shell (calls benefits API) |
 | GET | `/onboarding/benefits` | benefit cards |
 | GET | `/onboarding/benefits/<id>` | form preview + approval |
@@ -124,4 +124,4 @@ Demo auth is session-based; no password/OAuth. Guarded pages redirect to `/signi
 
 **State:** `store.onboarding` — `gmail_connected`, `profile_saved`, `benefits_ready`, `selected_benefit`, `application_id`, `fields`. Reset with `/api/demo/reset`.
 
-**Rules:** required fields (legal name, EIN, address, owner, phone, authorized signer) block Continue; missing fields are coral; approval checkbox is required before submit; submit is mock-only.
+**Rules:** all profile fields are optional in the demo and never block Continue; the approval checkbox is required before submit; submit is mock-only.

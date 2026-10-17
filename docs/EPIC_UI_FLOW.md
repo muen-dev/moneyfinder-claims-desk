@@ -55,7 +55,7 @@
 | 2 | **Sign in** | demo email field, continue, “no password — synthetic demo” | default, error |
 | 3 | **Gmail consent** | read-only scope, what is read/never written, synthetic mailbox, revoke note | default, previously authorized |
 | 4 | **Profile loading** | spinner + agent step log (scan, facts, conflicts, purchases) | loading, error |
-| 5 | **Profile review** | editable fields, source + confidence per field, required-field markers, coral missing fields | default, validation error |
+| 5 | **Profile review** | editable fields, source + confidence per field; no blocking required fields in the demo | default |
 | 6 | **Benefit search loading** | spinner + “searching official agency pages” log | loading, empty, error |
 | 7 | **Benefit cards** | name, agency, description, “why this fits you”, estimated amount, fit score, source link, select | cards, empty |
 | 8 | **Benefit detail / form** | official form name + preview, filled fields with source/confidence, missing flags, approval checkbox, Send | default, validation error, submitting |
@@ -70,7 +70,7 @@
 - **No real filing.** “Send” writes a mock submission event; no agency is contacted. Copy says “mock submission”.
 - **No invented eligibility.** Cards come from the curated fixture with source excerpts; fit score is a demo heuristic, labeled as such.
 - **Human approval is required** before “Send”.
-- **Required fields block progress.** Missing required fields are coral; the Continue button stays disabled until filled.
+- **Profile fields never block the demo.** Every field is optional; the agent flags gaps later in verification.
 - **Every filled form field shows its source** (profile fact / email / user edit) and a confidence chip.
 - **Demo auth only.** Email sign-in sets a session; no password, no OAuth, no real account. Guarded pages redirect to `/signin`.
 
@@ -109,7 +109,7 @@ PRISM: onboarding emits the same one-session-per-flow trace pattern:
 - [ ] Landing is public; all app pages redirect to `/signin` when signed out.
 - [ ] Sign-in works with the demo email and routes to `/onboarding` (first time) or `/dashboard`.
 - [ ] Consent screen explains scope; authorize starts the loading state; profile appears after.
-- [ ] Profile fields are editable; saving persists; missing required fields are coral and block Continue.
+- [ ] Profile fields are editable; saving persists; Continue works regardless of blanks.
 - [ ] Benefit search shows ≥4 cards with name, description, why-fit, amount, fit score, source.
 - [ ] Selecting a card opens the form; fields show source/confidence; missing fields flagged.
 - [ ] Send is blocked until approval; submit creates a `SUBMITTED` application with a progress card.
@@ -138,14 +138,14 @@ PRISM: onboarding emits the same one-session-per-flow trace pattern:
 ## 9. Estimate
 
 **8 points** · O=6h, M=9h, P=14h → `E≈9.8h`, σ≈1.3h. Factor 1.2 h/pt (new UI surfaces, reusable scaffold).
-Cut line: landing/auth → consent → profile → cards → form → progress. Never cut: required-field gate, approval checkbox, progress card, dashboard reflection.
+Cut line: landing/auth → consent → profile → cards → form → progress. Never cut: profile review, approval checkbox, progress card, dashboard reflection.
 
 ## 10. Tasks
 
 - [ ] Landing + public nav + CTA
 - [ ] Demo auth (`/signin`, session, guard, signout)
 - [ ] Onboarding state in `store` + `fixtures/onboarding.json`
-- [ ] Phase 1: consent → loading → editable profile → required-field validation
+- [ ] Phase 1: consent → crawl → editable profile (no blocking validation)
 - [ ] Phase 2: search loading → benefit cards
 - [ ] Phase 3: form preview + filled fields + approval + submit
 - [ ] Progress card + dashboard reflection

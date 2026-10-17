@@ -17,7 +17,7 @@
     <div class="panel-title-row">
       <div>
         <h1>Here is what we learned.</h1>
-        <p class="lede">Every field is editable. Coral fields are missing — you can add them now or continue and let the agent flag them in verification.</p>
+        <p class="lede">Every field is editable. Nothing here blocks the demo — change anything and continue.</p>
       </div>
       <span class="count-pill">{{ fields|length }} fields</span>
     </div>
@@ -28,13 +28,12 @@
     <form method="post" action="{{ url_for('flow.profile_save') }}" class="profile-form">
       <div class="field-grid">
         {% for f in fields %}
-        <div class="profile-field {{ 'is-missing' if f.key in missing_keys else '' }}">
-          <label for="field_{{ f.key }}">{{ f.label }}{% if f.required %} <span class="req">required</span>{% endif %}</label>
+        <div class="profile-field">
+          <label for="field_{{ f.key }}">{{ f.label }}</label>
           <input id="field_{{ f.key }}" name="field_{{ f.key }}" value="{{ f.value }}" placeholder="{{ 'Add this to continue' if f.key in missing_keys else '' }}">
           <div class="field-meta">
             <span class="source-chip">{{ f.source }}</span>
             {% if f.confidence %}<span class="conf">{{ "%.0f"|format(f.confidence*100) }}%</span>{% endif %}
-            {% if f.key in missing_keys %}<span class="needs">needs you</span>{% endif %}
           </div>
         </div>
         {% endfor %}

@@ -4,7 +4,7 @@
       "key": "legal_name",
       "label": "Legal business name",
       "value": "Gowanus Kettle Brewing Co. LLC",
-      "required": true,
+      "required": false,
       "source": "Gusto payroll email",
       "confidence": 0.99
     },
@@ -12,7 +12,7 @@
       "key": "entity_type",
       "label": "Entity type",
       "value": "Domestic LLC (New York)",
-      "required": true,
+      "required": false,
       "source": "NY registry",
       "confidence": 0.97
     },
@@ -20,7 +20,7 @@
       "key": "ein",
       "label": "EIN",
       "value": "00-4271985",
-      "required": true,
+      "required": false,
       "source": "Registry (synthetic)",
       "confidence": 0.99
     },
@@ -28,7 +28,7 @@
       "key": "address",
       "label": "Business address",
       "value": "417 Sackett Street, Brooklyn, NY 11231",
-      "required": true,
+      "required": false,
       "source": "NYS DTF email",
       "confidence": 0.98
     },
@@ -36,25 +36,25 @@
       "key": "owner_name",
       "label": "Owner / authorized representative",
       "value": "Marisol Vance",
-      "required": true,
+      "required": false,
       "source": "Business profile",
       "confidence": 0.95
     },
     {
       "key": "phone",
       "label": "Business phone",
-      "value": "",
-      "required": true,
-      "source": "Missing \u2014 please add",
-      "confidence": 0.0
+      "value": "(718) 555-0142",
+      "required": false,
+      "source": "User-supplied demo",
+      "confidence": 1.0
     },
     {
       "key": "authorized_rep",
       "label": "Authorized signer (name + role)",
-      "value": "",
-      "required": true,
-      "source": "Missing \u2014 please add",
-      "confidence": 0.0
+      "value": "Marisol Vance, Managing Member",
+      "required": false,
+      "source": "User-supplied demo",
+      "confidence": 1.0
     },
     {
       "key": "tax_year",

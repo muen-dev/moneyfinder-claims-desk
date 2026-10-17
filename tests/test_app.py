@@ -80,7 +80,8 @@ def test_profile_api_and_required_fields(client):
     data = client.get("/api/onboarding/profile").get_json()
     assert len(data["fields"]) == 12
     missing = {f["key"] for f in data["missing_required"]}
-    assert missing == {"phone", "authorized_rep"}
+    assert missing == set()
+    assert all(f["required"] is False for f in data["fields"])
 
 
 def test_profile_allows_missing_fields_then_goes_to_verification(client, app):
