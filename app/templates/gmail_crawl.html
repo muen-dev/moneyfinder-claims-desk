@@ -1,0 +1,60 @@
+{% extends "base_wizard.html" %}
+{% block title %}Gmail crawl · MoneyFinder{% endblock %}
+{% block content %}
+<section class="wizard">
+  <div class="wizard-head">
+    <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <div class="wizard-steps">
+      <span class="wstep active"><i>1</i>Inbox</span>
+      <span class="wstep"><i>2</i>Benefits</span>
+      <span class="wstep"><i>3</i>Form &amp; send</span>
+    </div>
+    <span class="wizard-user">{{ current_user.email }}</span>
+  </div>
+
+  <div class="wizard-panel narrow">
+    <p class="eyebrow">Step 1 of 3 · Gmail crawl</p>
+    <h1>Reading your inbox.</h1>
+    <p class="lede">The agent is crawling the synthetic mailbox, classifying messages and extracting sourced facts. Nothing is written back to Gmail.</p>
+
+    <div class="crawl-stats">
+      <div><strong>{{ scan.stats.messages }}</strong><span>messages read</span></div>
+      <div><strong>{{ scan.stats.facts }}</strong><span>facts extracted</span></div>
+      <div><strong class="coral">{{ scan.stats.conflicts }}</strong><span>conflicts found</span></div>
+      <div><strong>{{ scan.stats.purchases }}</strong><span>purchases queued</span></div>
+    </div>
+
+    <ul class="agent-log" id="agent-log">
+      <li class="done">Gmail scope: <b>gmail.readonly</b> · synthetic mailbox</li>
+      <li class="done">Crawling 25 messages · senders, subjects, dates, attachments</li>
+      <li class="done">Classifying: administrative, tax-credit, unrelated</li>
+      <li class="done">Extracting payroll, hires, capex, tips, receipts with quotes</li>
+      <li class="done">Detecting conflicts: headcount, legal-name variant, missing DD-214</li>
+      <li id="last-step">Preparing your editable profile…</li>
+    </ul>
+
+    <div class="crawl-note">
+      <span class="source-chip">Read-only</span>
+      <span class="source-chip">Synthetic data</span>
+      <span class="source-chip">Revocable</span>
+      <span class="muted">A claimed attachment is never treated as proof.</span>
+    </div>
+    <p class="error" id="load-error" hidden>The crawl could not finish. <a href="{{ url_for('flow.gmail_crawl') }}">Retry</a>.</p>
+  </div>
+  <p class="wizard-foot">Every extracted fact will show the email it came from on the next screen.</p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  setTimeout(async () => {
+    try {
+      const r = await fetch('/api/onboarding/profile');
+      if (!r.ok) throw new Error('profile');
+      document.getElementById('last-step').classList.add('done');
+      location.href = '/onboarding/profile';
+    } catch (e) {
+      document.getElementById('load-error').hidden = false;
+    }
+  }, 2600);
+</script>
+{% endblock %}

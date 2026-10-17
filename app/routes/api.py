@@ -1,9 +1,9 @@
 """JSON API — the contract the UI (and teammates) build against."""
 from __future__ import annotations
 
-from flask import Blueprint, current_app, jsonify, request, send_file
+from flask import Blueprint, current_app, jsonify, request, send_file, url_for
 
-from ..services import applications, eligibility, evidence, ledger, packet
+from ..services import applications, eligibility, evidence, ledger, packet, pdf_fill
 from ..services.prism import Prism
 from ..services.tracing import annotate
 from ..services.nicrron import Nicrron
@@ -193,6 +193,7 @@ def _emit(step: str, tool: str, summary: str = "") -> None:
 @bp.get("/onboarding/profile")
 def onboarding_profile():
     s = store()
+    s.mark_gmail_scanned()
     return ok(fields=s.onboarding_fields(), missing_required=s.missing_required(),
               stats={"messages": len(s.profile.get("messages", [])), "facts": len(s.profile.get("facts", [])),
                      "conflicts": len(s.profile.get("conflicts", [])), "purchases": len(s.ledger.get("transactions", []))})
@@ -215,8 +216,15 @@ def onboarding_fill(benefit_id: str):
         return jsonify({"error": {"code": "not_found", "message": "benefit not found"}}), 404
     s.select_benefit(benefit_id)
     _emit("pdf_fetch", "fetch_pdf_form", f"{benefit['form']} from {benefit['agency']}")
-    _emit("form_fill", "fill_form", f"{len(benefit['form_fields'])} fields")
-    return ok(benefit=benefit, fields=benefit["form_fields"])
+    try:
+        path = pdf_fill.build(benefit_id, s)
+    except pdf_fill.PdfFillError as exc:
+        return jsonify({"error": {"code": "pdf_fill_failed", "message": str(exc)}}), 422
+    _emit("form_fill", "fill_form", f"{len(benefit['form_fields'])} fields on {benefit['form']}")
+    s.mark_benefit_filled(benefit_id, str(path), len(benefit["form_fields"]))
+    return ok(benefit=benefit, fields=benefit["form_fields"], filled=True,
+              field_count=len(benefit["form_fields"]),
+              pdf_url=url_for("flow.benefit_pdf", benefit_id=benefit_id))
 
 
 @bp.post("/onboarding/benefits/<benefit_id>/submit")

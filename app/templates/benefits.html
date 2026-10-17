@@ -41,7 +41,7 @@
           <div><span>Deadline</span><strong>{{ b.deadline }}</strong></div>
         </div>
         <div class="benefit-actions">
-          <a class="btn primary small" href="{{ url_for('flow.benefit_detail', benefit_id=b.id) }}">Fill this form <span class="arrow">→</span></a>
+          <a class="btn primary small" href="{{ url_for('flow.benefit_filling', benefit_id=b.id) }}">Fill this form <span class="arrow">→</span></a>
           <a class="source-link" href="{{ b.source_url }}" target="_blank" rel="noopener">Official page ↗</a>
         </div>
       </article>

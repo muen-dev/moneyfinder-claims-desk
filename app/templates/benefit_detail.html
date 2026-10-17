@@ -18,6 +18,7 @@
       <div>
         <h1>{{ benefit.name }}</h1>
         <p class="lede">{{ benefit.agency }} · Form {{ benefit.form }} · filled from your profile</p>
+        <p class="source-note"><span class="source-chip">Official PDF filled</span>{% if filled_fields %} <span class="conf">{{ filled_fields }} fields</span>{% endif %} <span class="muted">Every value below is on the saved agency form.</span></p>
       </div>
       <span class="fit-badge">{{ benefit.fit_score }} fit</span>
     </div>

@@ -1,0 +1,58 @@
+{% extends "base_wizard.html" %}
+{% block title %}Filling {{ benefit.form }} · MoneyFinder{% endblock %}
+{% block content %}
+<section class="wizard">
+  <div class="wizard-head">
+    <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <div class="wizard-steps">
+      <span class="wstep done"><i>1</i>Inbox</span>
+      <span class="wstep done"><i>2</i>Benefits</span>
+      <span class="wstep active"><i>3</i>Form &amp; send</span>
+    </div>
+    <span class="wizard-user">{{ current_user.email }}</span>
+  </div>
+
+  <div class="wizard-panel narrow">
+    <p class="eyebrow">Step 3 of 3 · form fill</p>
+    <h1>Filling your {{ benefit.form }}.</h1>
+    <p class="lede">The agent is pulling the official {{ benefit.form }} from {{ benefit.agency }}, reading its AcroForm fields, and filling them from your profile. You review before anything is sent.</p>
+
+    <div class="fill-summary">
+      <div class="paper-card">
+        <div class="paper-head"><span>{{ benefit.agency }}</span><span class="mock-chip">{{ benefit.form }}</span></div>
+        <div class="paper-row"><div class="paper-label">Program</div><div class="paper-value">{{ benefit.name }}</div></div>
+        <div class="paper-row"><div class="paper-label">Source</div><div class="paper-value">{{ benefit.source_url }}</div></div>
+        <div class="paper-row"><div class="paper-label">Fields</div><div class="paper-value">{{ benefit.form_fields|length }} values, each with a source</div></div>
+      </div>
+    </div>
+
+    <ul class="agent-log" id="fill-log">
+      <li id="f1">Fetching official {{ benefit.form }} from the agency</li>
+      <li id="f2">Reading AcroForm fields</li>
+      <li id="f3">Filling values from your profile and evidence</li>
+      <li id="f4">Verifying every value on the saved PDF</li>
+      <li id="f5">Preparing your review screen…</li>
+    </ul>
+    <p class="error" id="load-error" hidden>The official PDF could not be filled. <a href="{{ url_for('flow.benefit_detail', benefit_id=benefit.id) }}">Review fields instead</a> or <a href="{{ url_for('flow.benefit_filling', benefit_id=benefit.id) }}">retry</a>.</p>
+  </div>
+  <p class="wizard-foot">Mock submission only · no agency is contacted · the filled PDF is a real download.</p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const ids = ['f1','f2','f3','f4','f5'];
+  let i = 0;
+  const timer = setInterval(() => { if (i < ids.length) { document.getElementById(ids[i]).classList.add('done'); i += 1; } }, 700);
+  setTimeout(async () => {
+    try {
+      const r = await fetch('/api/onboarding/benefits/{{ benefit.id }}/fill', { method: 'POST' });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data?.error?.message || 'fill failed');
+      clearInterval(timer); ids.forEach(id => document.getElementById(id).classList.add('done'));
+      location.href = '/onboarding/benefits/{{ benefit.id }}';
+    } catch (e) {
+      document.getElementById('load-error').hidden = false;
+    }
+  }, 3000);
+</script>
+{% endblock %}

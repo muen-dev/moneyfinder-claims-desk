@@ -14,7 +14,7 @@
 |---|---|---|
 | `/` | Landing page + public nav | static |
 | `/signin` | Demo auth (email only), session, guarded routes | demo user |
-| `/onboarding` | 3 phases: Gmail consent → profile review → benefit cards → **real official PDF fill** → approval → progress | onboarding fixture + inbox + `fixtures/forms/` |
+| `/onboarding` | 3 phases with explicit agent stages: Gmail consent → **Gmail crawl** → profile review → benefit cards → **form fill** (real PDF) → approval → progress | onboarding fixture + inbox + `fixtures/forms/` |
 | `/dashboard` | Four-column claims desk: Found / In process / Approved / Paid; totals; next actions | applications fixture |
 | `/applications/<id>` | Amount, evidence, event log, allowed status transitions | fixture + status machine |
 | `/eligibility` | 7 programs with verdicts, citations, `as_of`; WOTC flagged expired | cached official-page excerpts |

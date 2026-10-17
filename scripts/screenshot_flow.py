@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 
 from playwright.sync_api import sync_playwright
 
@@ -21,6 +22,7 @@ with sync_playwright() as p:
     page = context.new_page()
     page.set_default_timeout(15000)
 
+    page.request.post(BASE + "/api/demo/reset")
     page.goto(BASE + "/")
     page.wait_for_timeout(600)
     shot(page, "flow-landing.png", full=True)
@@ -28,29 +30,35 @@ with sync_playwright() as p:
 
     page.goto(BASE + "/signin")
     page.fill("#email", "marisol@gowanuskettle.example")
-    page.click("button:has-text('Continue')")
+    page.click("button:has-text('Continue')", no_wait_after=True)
     page.wait_for_url("**/onboarding/connect")
     shot(page, "flow-connect.png")
 
-    page.click("button:has-text('Authorize')")
+    page.click("button:has-text('Authorize')", no_wait_after=True)
+    page.wait_for_url("**/onboarding/crawl", timeout=15000)
+    page.wait_for_timeout(400)
+    shot(page, "flow-crawl.png")
     page.wait_for_url("**/onboarding/profile", timeout=15000)
     page.wait_for_timeout(300)
     shot(page, "flow-profile.png")
 
     page.fill("#field_phone", "(718) 555-0142")
     page.fill("#field_authorized_rep", "Marisol Vance, Managing Member")
-    page.click("button:has-text('Continue to benefit search')")
+    page.click("button:has-text('Continue to benefit search')", no_wait_after=True)
     page.wait_for_url("**/onboarding/benefits", timeout=20000)
     page.wait_for_timeout(300)
     shot(page, "flow-benefits.png")
 
     page.click("a:has-text('Fill this form')")
-    page.wait_for_url("**/onboarding/benefits/**")
-    page.wait_for_timeout(300)
+    page.wait_for_url("**/filling", timeout=15000)
+    page.wait_for_timeout(600)
+    shot(page, "flow-filling.png")
+    page.wait_for_url(re.compile(r".*/onboarding/benefits/ben_[^/]+$"), timeout=20000)
+    page.wait_for_timeout(400)
     shot(page, "flow-form.png")
 
     page.check("input[name='approve']")
-    page.click("button:has-text('Approve')")
+    page.click("button:has-text('Approve')", no_wait_after=True)
     page.wait_for_url("**/onboarding/progress/**")
     page.wait_for_timeout(300)
     shot(page, "flow-progress.png")

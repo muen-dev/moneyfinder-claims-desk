@@ -6,7 +6,7 @@ import time
 from flask import Blueprint, current_app, flash, redirect, render_template, request, send_file, session, url_for
 
 from ..auth import current_user, login_required
-from ..services import pdf_fill
+from ..services import evidence, pdf_fill
 from ..services.prism import Prism
 from ..services.tracing import annotate
 
@@ -75,6 +75,8 @@ def onboarding():
     s = store()
     if not s.onboarding["gmail_connected"]:
         return redirect(url_for("flow.connect"))
+    if not s.onboarding.get("gmail_scanned"):
+        return redirect(url_for("flow.gmail_crawl"))
     if not s.onboarding["profile_saved"]:
         return redirect(url_for("flow.profile_review"))
     if not s.onboarding["benefits_ready"]:
@@ -90,7 +92,7 @@ def onboarding():
 @login_required
 def connect():
     if store().onboarding["gmail_connected"]:
-        return redirect(url_for("flow.profile_review"))
+        return redirect(url_for("flow.gmail_crawl"))
     return render_template("onboarding_connect.html", step=1)
 
 
@@ -103,16 +105,26 @@ def connect_submit():
         session["onboarding_run_id"] = f"onboard_{int(time.time())}"
     emit("gmail_permission", "request_gmail_scope", "succeeded", "Read-only synthetic mailbox")
     emit("gmail_scan", "scan_inbox", "succeeded", "25 synthetic messages")
-    flash("Synthetic mailbox connected (read-only). Building your profile…")
-    return redirect(url_for("flow.profile_loading"))
+    flash("Synthetic mailbox connected (read-only). Crawling the inbox…")
+    return redirect(url_for("flow.gmail_crawl"))
+
+
+@bp.get("/onboarding/crawl")
+@login_required
+def gmail_crawl():
+    """Explicit Gmail crawl stage: read the inbox, extract facts, find conflicts."""
+    s = store()
+    if not s.onboarding["gmail_connected"]:
+        return redirect(url_for("flow.connect"))
+    if s.onboarding.get("gmail_scanned"):
+        return redirect(url_for("flow.profile_review"))
+    return render_template("gmail_crawl.html", step=1, scan=evidence.scan(s))
 
 
 @bp.get("/onboarding/profile-loading")
 @login_required
 def profile_loading():
-    if not store().onboarding["gmail_connected"]:
-        return redirect(url_for("flow.connect"))
-    return render_template("profile_loading.html", step=1)
+    return redirect(url_for("flow.gmail_crawl"))
 
 
 @bp.get("/onboarding/profile")
@@ -121,6 +133,8 @@ def profile_review():
     s = store()
     if not s.onboarding["gmail_connected"]:
         return redirect(url_for("flow.connect"))
+    if not s.onboarding.get("gmail_scanned"):
+        return redirect(url_for("flow.gmail_crawl"))
     return render_template("profile_review.html", step=1, fields=s.onboarding_fields(),
                            missing=s.missing_required(), error=None)
 
@@ -129,6 +143,8 @@ def profile_review():
 @login_required
 def profile_save():
     s = store()
+    if not s.onboarding.get("gmail_scanned"):
+        return redirect(url_for("flow.gmail_crawl"))
     values = {f["key"]: request.form.get(f"field_{f['key']}", "") for f in s.onboarding_fields()}
     missing = s.save_onboarding_profile(values)
     if missing:
@@ -164,10 +180,29 @@ def benefit_detail(benefit_id: str):
     benefit = s.benefit(benefit_id)
     if benefit is None:
         return ("Benefit not found", 404)
+    if not s.onboarding["benefits_ready"]:
+        return redirect(url_for("flow.searching"))
+    if s.onboarding.get("filled_benefit") != benefit_id:
+        return redirect(url_for("flow.benefit_filling", benefit_id=benefit_id))
     s.select_benefit(benefit_id)
-    emit("pdf_fetch", "fetch_pdf_form", "succeeded", f"{benefit['form']} from {benefit['agency']}")
-    emit("form_fill", "fill_form", "succeeded", f"{len(benefit['form_fields'])} fields")
-    return render_template("benefit_detail.html", step=3, benefit=benefit, error=None)
+    return render_template("benefit_detail.html", step=3, benefit=benefit, error=None,
+                           filled=True, filled_fields=s.onboarding.get("filled_field_count"))
+
+
+@bp.get("/onboarding/benefits/<benefit_id>/filling")
+@login_required
+def benefit_filling(benefit_id: str):
+    """Explicit form-fill stage: fetch the official PDF and fill it from the profile."""
+    s = store()
+    benefit = s.benefit(benefit_id)
+    if benefit is None:
+        return ("Benefit not found", 404)
+    if not s.onboarding["benefits_ready"]:
+        return redirect(url_for("flow.searching"))
+    if s.onboarding.get("filled_benefit") == benefit_id:
+        return redirect(url_for("flow.benefit_detail", benefit_id=benefit_id))
+    s.select_benefit(benefit_id)
+    return render_template("form_filling.html", step=3, benefit=benefit)
 
 
 @bp.post("/onboarding/benefits/<benefit_id>/submit")
@@ -177,6 +212,8 @@ def benefit_submit(benefit_id: str):
     benefit = s.benefit(benefit_id)
     if benefit is None:
         return ("Benefit not found", 404)
+    if s.onboarding.get("filled_benefit") != benefit_id:
+        return redirect(url_for("flow.benefit_filling", benefit_id=benefit_id))
     if request.form.get("approve") != "on":
         return render_template("benefit_detail.html", step=3, benefit=benefit,
                                error="Check the approval box before sending.")
@@ -210,6 +247,8 @@ def progress(app_id: str):
     app = s.application(app_id)
     if app is None:
         return ("Application not found", 404)
+    if s.onboarding.get("application_id") != app_id:
+        return redirect(url_for("flow.onboarding"))
     benefit = s.benefit(app.get("selected_benefit") or s.onboarding.get("selected_benefit") or "")
     return render_template("progress.html", step=3, app=app, benefit=benefit,
                            steps=app.get("progress_steps", []))

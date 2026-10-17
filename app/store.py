@@ -41,9 +41,12 @@ class Store:
             self.onboarding_fixture = load_json(self.fixtures / FIXTURE_FILES["onboarding"], {}) or {}
             self.onboarding = {
                 "gmail_connected": False,
+                "gmail_scanned": False,
                 "profile_saved": False,
                 "benefits_ready": False,
                 "selected_benefit": None,
+                "filled_benefit": None,
+                "filled_pdf": None,
                 "application_id": None,
                 "fields": copy.deepcopy(self.onboarding_fixture.get("profile_fields", [])),
                 "run_id": None,
@@ -89,6 +92,16 @@ class Store:
 
     def benefits(self) -> list[dict]:
         return self.onboarding_fixture.get("benefits", [])
+
+    def mark_gmail_scanned(self) -> None:
+        self.onboarding["gmail_scanned"] = True
+        self._persist()
+
+    def mark_benefit_filled(self, benefit_id: str, pdf_path: str, field_count: int) -> None:
+        self.onboarding["filled_benefit"] = benefit_id
+        self.onboarding["filled_pdf"] = pdf_path
+        self.onboarding["filled_field_count"] = field_count
+        self._persist()
 
     def benefit(self, benefit_id: str) -> dict | None:
         return next((b for b in self.benefits() if b.get("id") == benefit_id), None)

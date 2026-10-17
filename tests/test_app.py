@@ -57,11 +57,21 @@ def test_signin_rejects_bad_email(client):
 
 # ---- phase 1: consent -> profile ------------------------------------
 
-def test_connect_consent_starts_loading(client):
+def test_connect_consent_starts_crawl(client):
     login(client)
     assert client.get("/onboarding/connect").status_code == 200
     r = client.post("/onboarding/connect", follow_redirects=False)
-    assert r.status_code == 302 and "/onboarding/profile-loading" in r.headers["Location"]
+    assert r.status_code == 302 and "/onboarding/crawl" in r.headers["Location"]
+    crawl = client.get("/onboarding/crawl")
+    assert crawl.status_code == 200
+    assert b"Reading your inbox" in crawl.data
+
+
+def test_profile_requires_crawl_first(client):
+    login(client)
+    client.post("/onboarding/connect")
+    r = client.get("/onboarding/profile")
+    assert r.status_code == 302 and "/onboarding/crawl" in r.headers["Location"]
 
 
 def test_profile_api_and_required_fields(client):
@@ -76,6 +86,7 @@ def test_profile_api_and_required_fields(client):
 def test_profile_blocks_until_required_filled(client, app):
     login(client)
     client.post("/onboarding/connect")
+    client.get("/api/onboarding/profile")
     fields = app.extensions["store"].onboarding_fields()
     values = {f"field_{f['key']}": f["value"] for f in fields}
     r = client.post("/onboarding/profile", data=values)
@@ -109,6 +120,7 @@ def test_benefit_cards_after_search(client):
 def _reach_benefits(client):
     login(client)
     client.post("/onboarding/connect")
+    client.get("/api/onboarding/profile")
     s = client.application.extensions["store"]
     values = {f"field_{f['key']}": f["value"] for f in s.onboarding_fields()}
     values["field_phone"] = "(718) 555-0142"
@@ -120,13 +132,30 @@ def _reach_benefits(client):
 def test_form_detail_shows_sourced_fields(client):
     _reach_benefits(client)
     r = client.get("/onboarding/benefits/ben_it636")
+    assert r.status_code == 302 and "/filling" in r.headers["Location"]
+    client.post("/api/onboarding/benefits/ben_it636/fill")
+    r = client.get("/onboarding/benefits/ben_it636")
     assert r.status_code == 200
     assert b"3,104" in r.data
     assert b"Needs your input" in r.data
 
 
+def test_form_fill_stage_builds_real_pdf(client):
+    _reach_benefits(client)
+    r = client.get("/onboarding/benefits/ben_it636/filling")
+    assert r.status_code == 200
+    assert b"Filling your IT-636" in r.data
+    r = client.post("/api/onboarding/benefits/ben_it636/fill")
+    assert r.status_code == 200
+    data = r.get_json()
+    assert data["filled"] is True
+    assert data["field_count"] >= 8
+    assert data["pdf_url"].endswith("/onboarding/benefits/ben_it636/pdf")
+
+
 def test_submit_requires_approval(client):
     _reach_benefits(client)
+    client.post("/api/onboarding/benefits/ben_it636/fill")
     r = client.post("/onboarding/benefits/ben_it636/submit", data={})
     assert r.status_code == 200
     assert b"approval box" in r.data
@@ -134,6 +163,7 @@ def test_submit_requires_approval(client):
 
 def test_submit_creates_progress_and_dashboard_entry(client):
     _reach_benefits(client)
+    client.post("/api/onboarding/benefits/ben_it636/fill")
     r = client.post("/onboarding/benefits/ben_it636/submit", data={"approve": "on"})
     assert r.status_code == 302 and "/onboarding/progress/" in r.headers["Location"]
     progress = client.get(r.headers["Location"])
@@ -224,7 +254,14 @@ def test_demo_reset(client):
 
 def test_filled_official_pdf_downloads(client):
     _reach_benefits(client)
+    client.post("/api/onboarding/benefits/ben_it636/fill")
     r = client.get("/onboarding/benefits/ben_it636/pdf")
     assert r.status_code == 200
     assert r.data.startswith(b"%PDF")
     assert len(r.data) > 20_000
+
+
+def test_progress_requires_submission(client):
+    login(client)
+    r = client.get("/onboarding/progress/app_it636")
+    assert r.status_code == 302 and "/onboarding" in r.headers["Location"]

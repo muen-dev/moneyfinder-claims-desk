@@ -21,9 +21,10 @@
   └─ CTA “Find my benefits” → /signin
        └─ demo sign-in (email only; no real password)
             └─ /onboarding
-                 ├─ PHASE 1 — Gmail consent
+                 ├─ PHASE 1 — Gmail consent + crawl
                  │    consent screen (scope, synthetic data, revoke)
-                 │    → authorize → spinner: scan + build profile
+                 │    → authorize → **Gmail crawl** screen:
+                 │      messages read, facts, conflicts, purchases
                  │    → profile review: every field editable,
                  │      required fields missing = coral “needs you”
                  │    → continue (blocked until required fields are filled)
@@ -35,8 +36,10 @@
                  │    → user selects a card
                  │
                  └─ PHASE 3 — Form fill & submit
-                      → agent fetches the official PDF (cached preview)
-                      → form fields filled from profile, each with source
+                      → **form fill screen**: fetch official PDF,
+                        read AcroForm fields, fill from profile,
+                        verify the saved PDF
+                      → form review: every field with source/confidence
                       → user reviews + approves (checkbox)
                       → “Send” → progress card (submitted → agency review)
                       → CTA “Go to dashboard” (application now in the pipeline)

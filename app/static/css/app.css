@@ -492,3 +492,13 @@ select:focus, input:focus { outline: 2px solid var(--ink); outline-offset: 1px; 
   .arch-grid { grid-template-columns: 1fr; }
   .problem-stat strong { font-size: 38px; }
 }
+
+/* ---------- crawl + form-fill stages ---------- */
+.crawl-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 24px 0 28px; }
+.crawl-stats div { background: var(--wash); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.crawl-stats strong { display: block; font-size: 30px; letter-spacing: -.04em; }
+.crawl-stats span { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 800; }
+.crawl-note { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+.fill-summary { margin: 24px 0; }
+.fill-summary .paper-card { background: #fff; }
+@media (max-width: 640px) { .crawl-stats { grid-template-columns: repeat(2, 1fr); } }
