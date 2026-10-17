@@ -40,7 +40,7 @@ Everything is backed by **fixtures**, so the demo works with no network, no mode
 ![Claims Desk](docs/proofs/dashboard.png)
 ![PRISM session — 12 steps, flagged](docs/proofs/prism-sessions.png)
 
-Design system + component specs: [docs/DESIGN.md](docs/DESIGN.md) · User-flow epic: [docs/EPIC_UI_FLOW.md](docs/EPIC_UI_FLOW.md).
+Design system + component specs: [DESIGN.md](DESIGN.md) · User-flow epic: [docs/EPIC_UI_FLOW.md](docs/EPIC_UI_FLOW.md).
 
 ## Quickstart
 

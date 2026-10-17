@@ -32,7 +32,7 @@ The scaffold is functional against fixtures. Until the contract changes:
 
 ## UI flow (Epic 03)
 
-- **Thuy:** landing, design tokens (`docs/DESIGN.md`), consent + profile screens, visual QA.
+- **Thuy:** landing, design tokens (`DESIGN.md`), consent + profile screens, visual QA.
 - **Kenan:** auth screens, benefit cards, form/approval, progress, dashboard integration.
 - **Richard:** `store.onboarding` state, `/api/onboarding/*`, PRISM onboarding traces, tests.
 
