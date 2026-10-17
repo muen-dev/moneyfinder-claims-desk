@@ -121,6 +121,22 @@ class Store:
         })
         self._persist()
 
+    def snapshot_state(self) -> dict:
+        return {
+            "onboarding": self.onboarding,
+            "applications": self.applications,
+            "events": self.events,
+            "tasks": self.tasks,
+            "runs": self.runs,
+        }
+
+    def hydrate_state(self, state: dict) -> None:
+        if not isinstance(state, dict):
+            return
+        for key in ("onboarding", "applications", "events", "tasks", "runs"):
+            if key in state and state[key] is not None:
+                setattr(self, key, state[key])
+
     def resolve_conflict(self, field: str, resolution: str) -> None:
         self.onboarding.setdefault("resolved_conflicts", {})[field] = resolution
         self._persist()
