@@ -456,3 +456,39 @@ select:focus, input:focus { outline: 2px solid var(--ink); outline-offset: 1px; 
   *, *:before, *:after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .agent-spinner { animation: none; border-top-color: var(--muted); }
 }
+
+/* ---------- landing content (problem / pattern / demo / architecture) ---------- */
+.section.wash { background: var(--wash); }
+.problem-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; }
+.problem-stats { display: grid; gap: 12px; }
+.problem-stat { border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; gap: 4px; }
+.problem-stat strong { font-size: 48px; letter-spacing: -.04em; line-height: 1; }
+.problem-stat span { font-size: 13px; color: var(--ink-2); max-width: 26ch; }
+.source-note { font-size: 11px; color: var(--muted); line-height: 1.55; margin: 16px 0 0; max-width: 72ch; }
+.headline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+.headline-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+.headline-card strong { display: block; font-size: 32px; letter-spacing: -.04em; }
+.headline-card h3 { font-size: 20px; margin: 4px 0 10px; }
+.headline-card span { font-size: 11px; color: var(--muted); }
+.demo-band { background: linear-gradient(120deg, var(--lavender) 0%, var(--peach) 55%, var(--mint) 100%); }
+.demo-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+.demo-list { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 8px; }
+.demo-list li { position: relative; padding-left: 22px; font-size: 14px; color: var(--ink-2); }
+.demo-list li:before { content: ""; position: absolute; left: 0; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+.demo-card { background: #fff; }
+.demo-card .paper-row:last-of-type { border-bottom: 0; }
+.arch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 32px; }
+.arch-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+.arch-card .feature-num { font-size: 10px; }
+.arch-card h3 { font-size: 18px; margin: 10px 0 6px; }
+.arch-card p { font-size: 13px; color: var(--ink-2); margin: 0; }
+.pdf-download { margin-top: 10px; }
+@media (max-width: 1000px) {
+  .problem-grid, .demo-grid { grid-template-columns: 1fr; gap: 32px; }
+  .headline-grid { grid-template-columns: 1fr; }
+  .arch-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .arch-grid { grid-template-columns: 1fr; }
+  .problem-stat strong { font-size: 38px; }
+}

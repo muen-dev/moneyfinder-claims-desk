@@ -16,9 +16,10 @@
       <span class="wordmark-glyph">M</span> MoneyFinder
     </a>
     <nav class="public-links">
+      <a href="{{ url_for('flow.landing') }}#problem">The problem</a>
       <a href="{{ url_for('flow.landing') }}#how">How it works</a>
-      <a href="{{ url_for('flow.landing') }}#benefits">Benefits</a>
-      <a href="{{ url_for('flow.landing') }}#accountants">For accountants</a>
+      <a href="{{ url_for('flow.landing') }}#demo">Live demo</a>
+      <a href="{{ url_for('flow.landing') }}#under-the-hood">Under the hood</a>
     </nav>
     {% if user %}
       <a class="btn primary small" href="{{ url_for('flow.onboarding') }}">Continue setup</a>
