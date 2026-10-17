@@ -595,3 +595,21 @@ select:focus, input:focus { outline: 2px solid var(--ink); outline-offset: 1px; 
 .modal-demo-note code { font-size: 10px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
 @media (max-width: 640px) { .modal-card { padding: 24px; } .modal-card h2 { font-size: 25px; } .modal-actions { justify-content: stretch; } .modal-actions .btn, .modal-actions form { flex: 1; } .modal-actions form .btn { width: 100%; } }
+
+/* ---------- Gmail crawl review ---------- */
+.crawl-categories { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 22px; }
+.crawl-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font-size: 11px; font-weight: 700; color: var(--ink-2); text-transform: capitalize; }
+.crawl-chip b { color: var(--ink); }
+.crawl-columns { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; margin: 8px 0 24px; }
+.crawl-messages, .crawl-facts { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 10px; }
+.crawl-messages li { display: grid; grid-template-columns: 78px 1fr; gap: 10px; align-items: start; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.crawl-messages li:last-child, .crawl-facts li:last-child { border-bottom: 0; padding-bottom: 0; }
+.crawl-messages strong { display: block; font-size: 12px; line-height: 1.35; }
+.crawl-messages small { display: block; font-size: 10px; color: var(--muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crawl-cat { display: inline-block; padding: 3px 7px; border-radius: 999px; background: var(--wash); color: var(--muted); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+.crawl-facts li { display: grid; grid-template-columns: 1fr 1.2fr auto; gap: 8px; align-items: baseline; padding-bottom: 9px; border-bottom: 1px solid var(--line); font-size: 12px; }
+.crawl-facts strong { font-size: 11px; color: var(--muted); }
+.crawl-facts span { font-weight: 700; }
+.crawl-facts small { font-size: 10px; color: var(--muted); text-align: right; }
+.crawl-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+@media (max-width: 900px) { .crawl-columns { grid-template-columns: 1fr; } }

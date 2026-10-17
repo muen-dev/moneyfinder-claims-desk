@@ -337,3 +337,14 @@ def test_connect_page_has_permission_modal(client):
     assert page.status_code == 200
     assert b"Allow MoneyFinder to read your Gmail?" in page.data
     assert b"Allow read-only access" in page.data
+
+
+def test_signin_resets_onboarding_to_gmail_start(client, app):
+    login(client)
+    client.post("/onboarding/connect")
+    assert app.extensions["store"].onboarding["gmail_connected"] is True
+    # a fresh sign-in must start at the Gmail permission modal, not mid-flow
+    client.post("/signin", data={"email": "marisol@gowanuskettle.example"})
+    assert app.extensions["store"].onboarding["gmail_connected"] is False
+    r = client.get("/onboarding")
+    assert r.status_code == 302 and "/onboarding/connect" in r.headers["Location"]

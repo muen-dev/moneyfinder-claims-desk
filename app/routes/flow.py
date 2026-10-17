@@ -55,7 +55,8 @@ def signin():
             flash("Enter an email address to continue (demo only).")
             return render_template("signin.html"), 400
         session["user"] = {"email": email, "name": "Marisol Vance"}
-        session.setdefault("onboarding_run_id", f"onboard_{int(time.time())}")
+        session["onboarding_run_id"] = f"onboard_{int(time.time())}"
+        store().start_onboarding()
         nxt = request.args.get("next") or request.form.get("next") or url_for("flow.onboarding")
         return redirect(nxt)
     if current_user():
@@ -111,6 +112,7 @@ def connect():
 @login_required
 def connect_submit():
     s = store()
+    s.start_onboarding()
     s.onboarding["gmail_connected"] = True
     if not session.get("onboarding_run_id"):
         session["onboarding_run_id"] = f"onboard_{int(time.time())}"

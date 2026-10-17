@@ -12,10 +12,10 @@
     <span class="wizard-user">{{ current_user.email }}</span>
   </div>
 
-  <div class="wizard-panel narrow">
+  <div class="wizard-panel">
     <p class="eyebrow">Step 1 of 3 · Gmail crawl</p>
     <h1>Reading your inbox.</h1>
-    <p class="lede">The agent is crawling the synthetic mailbox, classifying messages and extracting sourced facts. Nothing is written back to Gmail.</p>
+    <p class="lede">The agent crawled the synthetic mailbox, classified every message, and extracted sourced facts. Review what it found before building the profile.</p>
 
     <div class="crawl-stats">
       <div><strong>{{ scan.stats.messages }}</strong><span>messages read</span></div>
@@ -24,28 +24,49 @@
       <div><strong>{{ scan.stats.purchases }}</strong><span>purchases queued</span></div>
     </div>
 
-    <ul class="agent-log" id="agent-log">
-      <li class="done">Gmail scope: <b>gmail.readonly</b> · synthetic mailbox</li>
-      <li class="done">Crawling 25 messages · senders, subjects, dates, attachments</li>
-      <li class="done">Classifying: administrative, tax-credit, unrelated</li>
-      <li class="done">Extracting payroll, hires, capex, tips, receipts with quotes</li>
-      <li class="done">Detecting conflicts: headcount, legal-name variant, missing DD-214</li>
-      <li id="last-step">Preparing your editable profile…</li>
-    </ul>
+    <div class="crawl-categories">
+      {% for category, count in scan.stats.categories.items() %}
+      <span class="crawl-chip">{{ category }} <b>{{ count }}</b></span>
+      {% endfor %}
+      <span class="crawl-chip muted">read-only</span>
+    </div>
 
-    <div class="crawl-note">
-      <span class="source-chip">Read-only</span>
-      <span class="source-chip">Synthetic data</span>
-      <span class="source-chip">Revocable</span>
-      <span class="muted">A claimed attachment is never treated as proof.</span>
+    <div class="crawl-columns">
+      <div class="card">
+        <p class="eyebrow">Sample messages read</p>
+        <ul class="crawl-messages">
+          {% for m in scan.messages[:6] %}
+          <li>
+            <span class="crawl-cat">{{ m.category }}</span>
+            <div><strong>{{ m.subject }}</strong><small>{{ m.sender }} · {{ m.date[:10] }}</small></div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Facts extracted</p>
+        <ul class="crawl-facts">
+          {% for f in scan.facts[:6] %}
+          <li><strong>{{ f.label }}</strong><span>{{ f.value }}</span><small>{{ f.source_kind }} · {{ "%.0f"|format(f.confidence*100) }}%</small></li>
+          {% endfor %}
+        </ul>
+        <p class="source-note">Conflicts are preserved, not guessed. You can edit every field on the next screen.</p>
+      </div>
+    </div>
+
+    <div class="crawl-actions">
+      <a class="btn primary" id="crawl-continue" href="{{ url_for('flow.profile_building') }}">Continue to profile builder <span class="arrow">→</span></a>
+      <span class="muted" id="crawl-hint">Preparing the profile builder…</span>
     </div>
     <p class="error" id="load-error" hidden>The crawl could not finish. <a href="{{ url_for('flow.gmail_crawl') }}">Retry</a>.</p>
   </div>
-  <p class="wizard-foot">Every extracted fact will show the email it came from on the next screen.</p>
+  <p class="wizard-foot">Read-only synthetic mailbox · every extracted fact will show the email that proves it</p>
 </section>
 {% endblock %}
 {% block scripts %}
 <script>
-  setTimeout(() => { location.href = '/onboarding/profile-building'; }, 2600);
+  setTimeout(() => {
+    document.getElementById('crawl-hint').textContent = 'Ready — review the crawl or continue.';
+  }, 1600);
 </script>
 {% endblock %}

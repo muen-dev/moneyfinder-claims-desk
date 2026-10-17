@@ -96,6 +96,22 @@ class Store:
     def benefits(self) -> list[dict]:
         return self.onboarding_fixture.get("benefits", [])
 
+    def start_onboarding(self) -> None:
+        """Fresh sign-in starts at the Gmail permission modal, never mid-flow."""
+        self.onboarding.update({
+            "gmail_connected": False,
+            "gmail_scanned": False,
+            "profile_saved": False,
+            "verification_ready": False,
+            "benefits_ready": False,
+            "selected_benefit": None,
+            "filled_benefit": None,
+            "filled_pdf": None,
+            "filled_field_count": None,
+            "application_id": None,
+        })
+        self._persist()
+
     def mark_gmail_scanned(self) -> None:
         self.onboarding["gmail_scanned"] = True
         self._persist()
