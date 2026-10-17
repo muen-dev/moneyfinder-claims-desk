@@ -1,6 +1,7 @@
 {% extends "base_wizard.html" %}
 {% block title %}Filling {{ benefit.form }} · MoneyFinder{% endblock %}
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/pdf_viewer.css') }}">
 <section class="wizard">
   <div class="wizard-head">
     <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
@@ -12,47 +13,160 @@
     <span class="wizard-user">{{ current_user.email }}</span>
   </div>
 
-  <div class="wizard-panel narrow">
+  <div class="wizard-panel wide">
     <p class="eyebrow">Step 3 of 3 · form fill</p>
-    <h1>Filling your {{ benefit.form }}.</h1>
-    <p class="lede">The agent is pulling the official {{ benefit.form }} from {{ benefit.agency }}, reading its AcroForm fields, and filling them from your profile. You review before anything is sent.</p>
-
-    <div class="fill-summary">
-      <div class="paper-card">
-        <div class="paper-head"><span>{{ benefit.agency }}</span><span class="mock-chip">{{ benefit.form }}</span></div>
-        <div class="paper-row"><div class="paper-label">Program</div><div class="paper-value">{{ benefit.name }}</div></div>
-        <div class="paper-row"><div class="paper-label">Source</div><div class="paper-value">{{ benefit.source_url }}</div></div>
-        <div class="paper-row"><div class="paper-label">Fields</div><div class="paper-value">{{ benefit.form_fields|length }} values, each with a source</div></div>
+    <div class="panel-title-row">
+      <div>
+        <h1>Filling your {{ benefit.form }}.</h1>
+        <p class="lede">This is the actual {{ benefit.form }} PDF from {{ benefit.agency }}, with its real AcroForm fields. The agent scrolls to each field and types the value — watch it happen.</p>
       </div>
+      <span class="fit-badge" id="fill-progress">0 / {{ benefit.form_fields|length }} fields</span>
     </div>
 
-    <ul class="agent-log" id="fill-log">
-      <li id="f1">Fetching official {{ benefit.form }} from the agency</li>
-      <li id="f2">Reading AcroForm fields</li>
-      <li id="f3">Filling values from your profile and evidence</li>
-      <li id="f4">Verifying every value on the saved PDF</li>
-      <li id="f5">Preparing your review screen…</li>
-    </ul>
-    <p class="error" id="load-error" hidden>The official PDF could not be filled. <a href="{{ url_for('flow.benefit_detail', benefit_id=benefit.id) }}">Review fields instead</a> or <a href="{{ url_for('flow.benefit_filling', benefit_id=benefit.id) }}">retry</a>.</p>
+    <div class="agent-fill-layout">
+      <div class="pdf-viewer-wrap">
+        <div class="pdf-viewer-stage" id="viewerContainer">
+          <div id="viewer" class="pdfViewer"></div>
+          <div class="pdf-viewer-status" id="pdf-status">Loading the official {{ benefit.form }} PDF…</div>
+        </div>
+      </div>
+      <aside class="agent-fill-side">
+        <div class="card">
+          <p class="eyebrow">Agent log</p>
+          <ul class="agent-log" id="fill-log">
+            <li id="f1">Fetching official {{ benefit.form }} from {{ benefit.agency }}</li>
+            <li id="f2">Opening the real PDF with form annotations</li>
+            <li id="f3">Finding each AcroForm field</li>
+            <li id="f4">Typing values from your profile</li>
+            <li id="f5">Saving and verifying the filled PDF</li>
+          </ul>
+          <p class="error" id="load-error" hidden>The official PDF could not be filled. <a href="{{ url_for('flow.benefit_filling', benefit_id=benefit.id) }}">Try again</a>.</p>
+          <p class="source-note">Ported from Richard’s <code>fill_pdf.py</code> (Anchor + PDF.js). Mock submission only · no agency is contacted · the filled PDF is a real download.</p>
+        </div>
+      </aside>
+    </div>
   </div>
-  <p class="wizard-foot">Mock submission only · no agency is contacted · the filled PDF is a real download.</p>
 </section>
 {% endblock %}
 {% block scripts %}
+<script src="{{ url_for('static', filename='vendor/pdf.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/pdf_viewer.js') }}"></script>
 <script>
-  const ids = ['f1','f2','f3','f4','f5'];
-  let i = 0;
-  const timer = setInterval(() => { if (i < ids.length) { document.getElementById(ids[i]).classList.add('done'); i += 1; } }, 700);
-  setTimeout(async () => {
-    try {
-      const r = await fetch('/api/onboarding/benefits/{{ benefit.id }}/fill', { method: 'POST' });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data?.error?.message || 'fill failed');
-      clearInterval(timer); ids.forEach(id => document.getElementById(id).classList.add('done'));
-      location.href = '/onboarding/benefits/{{ benefit.id }}';
-    } catch (e) {
-      document.getElementById('load-error').hidden = false;
+  const BENEFIT_ID = "{{ benefit.id }}";
+  const FIELDS_URL = "/api/onboarding/benefits/" + BENEFIT_ID + "/fields";
+  const FILL_URL = "/api/onboarding/benefits/" + BENEFIT_ID + "/fill";
+  const container = document.getElementById('viewerContainer');
+  const statusEl = document.getElementById('pdf-status');
+  const progress = document.getElementById('fill-progress');
+  const log = { f1: document.getElementById('f1'), f2: document.getElementById('f2'), f3: document.getElementById('f3'),
+                f4: document.getElementById('f4'), f5: document.getElementById('f5') };
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  async function findField(id, pageNumber) {
+    for (let i = 0; i < 60; i += 1) {
+      const el = document.querySelector(`[data-element-id="${CSS.escape(id)}"]`);
+      if (el) return el;
+      if (i % 8 === 0 && pageNumber !== undefined) viewer.scrollPageIntoView({ pageNumber: pageNumber + 1 });
+      await sleep(120);
     }
-  }, 3000);
+    return null;
+  }
+
+  async function mark(el, active) {
+    el.style.outline = active ? '3px solid #FFB000' : '2px solid #2BA84A';
+    el.style.outlineOffset = '1px';
+    el.style.boxShadow = active ? '0 0 0 6px rgba(255,176,0,.25)' : 'none';
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    await sleep(active ? 150 : 50);
+  }
+
+  async function typeField(el, text) {
+    el.focus();
+    el.value = '';
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    for (const ch of text) {
+      el.value += ch;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      await sleep(14);
+    }
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+    el.blur();
+  }
+
+  async function run() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "{{ url_for('static', filename='vendor/pdf.worker.min.js') }}";
+    log.f1.classList.add('done');
+    const payload = await fetch(FIELDS_URL).then(r => { if (!r.ok) throw new Error('layout'); return r.json(); });
+    const layout = payload.layout;
+    const bytes = new Uint8Array(await (await fetch(payload.pdf_url)).arrayBuffer());
+    log.f2.classList.add('done');
+    const doc = await pdfjsLib.getDocument({ data: bytes }).promise;
+
+    const eventBus = new pdfjsViewer.EventBus();
+    const linkService = new pdfjsViewer.PDFLinkService({ eventBus });
+    window.viewer = new pdfjsViewer.PDFViewer({
+      container, eventBus, linkService,
+      annotationMode: pdfjsLib.AnnotationMode.ENABLE_FORMS, textLayerMode: 0,
+    });
+    linkService.setViewer(viewer);
+    eventBus.on('pagesinit', () => { viewer.currentScaleValue = 'page-width'; });
+    const ready = new Promise(resolve => eventBus.on('pagesinit', resolve));
+    viewer.setDocument(doc);
+    linkService.setDocument(doc, null);
+    await ready;
+    log.f3.classList.add('done');
+
+    const fieldObjects = await doc.getFieldObjects();
+    const plan = [];
+    for (const f of layout.fields) {
+      const widgets = fieldObjects[f.name] || [];
+      if (!widgets.length) continue;
+      let widget = widgets[0];
+      if (f.kind === 'checkbox') {
+        const want = f.checked ? 'Yes' : 'No';
+        widget = widgets.find(w => String(w.exportValues || '').includes(want)) || widgets[0];
+      }
+      plan.push(Object.assign({}, f, { id: widget.id, pdfPage: widget.page }));
+    }
+    progress.textContent = `0 / ${plan.length} fields`;
+
+    const request = fetch(FILL_URL, { method: 'POST' })
+      .then(async r => { const d = await r.json(); if (!r.ok) throw new Error(d?.error?.message || 'fill'); return d; });
+
+    log.f4.classList.add('done');
+    for (let i = 0; i < plan.length; i += 1) {
+      const f = plan[i];
+      viewer.scrollPageIntoView({ pageNumber: (f.pdfPage ?? f.page) + 1 });
+      const el = await findField(f.id, f.pdfPage ?? f.page);
+      if (!el) continue;
+      await mark(el, true);
+      if (f.kind === 'checkbox') {
+        if (!el.checked) el.click();
+        await sleep(130);
+      } else if (f.value) {
+        await typeField(el, f.value);
+      } else {
+        el.style.outline = '3px solid #D65A4A';
+        await sleep(240);
+      }
+      await mark(el, false);
+      progress.textContent = `${i + 1} / ${plan.length} fields`;
+      statusEl.textContent = `Typing ${f.name}`;
+    }
+
+    log.f5.classList.add('done');
+    statusEl.textContent = 'Saving the filled PDF…';
+    await request;
+    progress.textContent = 'PDF filled';
+    statusEl.textContent = 'Filled PDF saved. Opening review…';
+    await sleep(600);
+    location.href = '/onboarding/benefits/' + BENEFIT_ID;
+  }
+
+  run().catch(err => {
+    console.error('PDF fill failed:', err);
+    document.getElementById('load-error').hidden = false;
+    statusEl.textContent = 'Could not render the official PDF.';
+  });
 </script>
 {% endblock %}

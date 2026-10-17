@@ -46,15 +46,6 @@
 {% endblock %}
 {% block scripts %}
 <script>
-  setTimeout(async () => {
-    try {
-      const r = await fetch('/api/onboarding/profile');
-      if (!r.ok) throw new Error('profile');
-      document.getElementById('last-step').classList.add('done');
-      location.href = '/onboarding/profile';
-    } catch (e) {
-      document.getElementById('load-error').hidden = false;
-    }
-  }, 2600);
+  setTimeout(() => { location.href = '/onboarding/profile-building'; }, 2600);
 </script>
 {% endblock %}

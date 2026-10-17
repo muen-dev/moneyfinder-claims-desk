@@ -523,3 +523,75 @@ select:focus, input:focus { outline: 2px solid var(--ink); outline-offset: 1px; 
 .verify-incentive .benefit-meta { grid-template-columns: 1fr 1.4fr; }
 @media (max-width: 1000px) { .verify-grid, .verify-incentives { grid-template-columns: 1fr; } .verify-inputs { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px) { .verify-inputs { grid-template-columns: 1fr; } }
+
+/* ---------- gov docs finder ---------- */
+.gov-tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--line); margin: 8px 0 24px; }
+.gov-tab { background: transparent; border: 0; padding: 10px 14px; border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; }
+.gov-tab:hover { background: var(--wash); color: var(--ink); }
+.gov-tab.active { background: var(--ink); color: #fff; }
+.gov-panel { display: none; }
+.gov-panel.active { display: block; }
+.gov-search { display: flex; gap: 10px; max-width: 620px; margin: 14px 0; }
+.gov-search input { flex: 1; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; font-size: 15px; }
+#gov-results { margin-top: 16px; display: grid; gap: 12px; }
+#gov-results .verify-card, #gov-results .verify-incentive { background: #fff; }
+@media (max-width: 640px) { .gov-search { flex-direction: column; } }
+
+/* ---------- animated agent PDF fill ---------- */
+.agent-fill-layout { display: grid; grid-template-columns: 1.5fr .7fr; gap: 24px; align-items: start; }
+.agent-paper { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; overflow: hidden; }
+.agent-paper .paper-row { grid-template-columns: .9fr 1.1fr; }
+.agent-paper .paper-value { min-height: 1.6em; font-size: 15px; }
+.fill-target { white-space: pre-wrap; }
+.fill-caret { display: none; width: 2px; height: 1.05em; background: var(--ink); vertical-align: -2px; margin-left: 2px; animation: blink .9s step-end infinite; }
+.fill-row.active .fill-caret { display: inline-block; }
+.fill-row.active { background: var(--lavender); margin: 0 -20px; padding-left: 20px; padding-right: 20px; }
+.fill-row.is-missing .fill-target { color: var(--danger); font-weight: 700; }
+.agent-fill-side .card { position: sticky; top: 96px; }
+.agent-fill-side .agent-log { margin-top: 8px; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (max-width: 1000px) { .agent-fill-layout { grid-template-columns: 1fr; } .agent-fill-side .card { position: static; } }
+
+/* ---------- real PDF stage (PDF.js) ---------- */
+.pdf-stage { max-height: 900px; overflow: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #e9e6df; padding: 16px; }
+.pdf-page { position: relative; margin: 0 auto 16px; background: #fff; box-shadow: 0 1px 3px rgba(14, 27, 44, .12); }
+.pdf-page canvas { display: block; }
+.pdf-field { position: absolute; color: #123a7a; font-family: Manrope, sans-serif; line-height: 1.15; white-space: nowrap; overflow: hidden; background: rgba(255, 255, 255, .82); border-radius: 2px; padding: 0 2px; }
+.pdf-field.active { background: rgba(13, 124, 116, .16); outline: 1.5px solid var(--teal); }
+.pdf-field.missing { color: var(--danger); font-weight: 700; background: rgba(255, 246, 241, .95); }
+.pdf-caret { display: none; width: 1px; height: 1em; background: var(--teal); vertical-align: -2px; animation: blink .8s step-end infinite; }
+.pdf-field.active .pdf-caret { display: inline-block; }
+.pdf-check { display: grid; place-items: center; background: transparent; font-weight: 800; color: var(--ink); }
+.pdf-loading { padding: 48px 16px; text-align: center; color: var(--muted); font-size: 14px; }
+@media (max-width: 1000px) { .pdf-stage { max-height: 70vh; } }
+
+
+/* ---------- PDF.js viewer stage (real form) ---------- */
+.pdf-viewer-wrap { position: relative; height: 74vh; min-height: 420px; }
+.pdf-viewer-stage { position: absolute; inset: 0; overflow: auto; background: #525659; border-radius: var(--radius); padding: 10px; }
+.pdf-viewer-stage .pdfViewer .page { margin: 12px auto; border: 0; box-shadow: 0 2px 10px rgba(0, 0, 0, .45); }
+.pdf-viewer-status { position: sticky; bottom: 0; left: 0; right: 0; margin-top: 10px; padding: 8px 12px; border-radius: 8px; background: rgba(14, 27, 44, .88); color: #f4f1ea; font-size: 12px; font-weight: 700; }
+
+/* ---------- Clerk-style Google SSO + Gmail permission modal ---------- */
+.sso-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px 18px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .15s, border-color .15s, transform .15s; }
+.sso-btn:hover { background: var(--wash); border-color: #c9c3b7; }
+.sso-btn:active { transform: scale(.99); }
+.sso-btn svg { width: 19px; height: 19px; flex: none; }
+.auth-fine { font-size: 11px; color: var(--muted); line-height: 1.5; margin: 16px 0 4px; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 20px; background: rgba(14, 27, 44, .48); backdrop-filter: blur(7px); }
+.modal-card { width: 100%; max-width: 540px; max-height: 92vh; overflow: auto; background: #fff; border-radius: 24px; padding: 32px; box-shadow: 0 24px 80px rgba(14, 27, 44, .35); }
+.modal-icon { width: 46px; height: 46px; border-radius: 12px; background: var(--wash); display: grid; place-items: center; margin-bottom: 18px; }
+.modal-icon svg { width: 24px; height: 24px; }
+.modal-card h2 { font-size: 30px; letter-spacing: -1.2px; line-height: 1.08; margin: 8px 0 12px; }
+.modal-lede { font-size: 15px; color: var(--ink-2); line-height: 1.55; margin: 0 0 22px; }
+.permission-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.permission-list li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.permission-list p { margin: 2px 0 0; font-size: 12px; color: var(--muted); line-height: 1.45; }
+.permission-list strong { font-size: 13px; }
+.perm { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+.perm.yes { background: var(--mint); color: var(--success); }
+.perm.no { background: #fdecec; color: var(--danger); }
+.modal-demo-note { margin: 18px 0; padding: 10px 12px; border-radius: 10px; background: var(--cream); color: var(--muted); font-size: 11px; line-height: 1.5; }
+.modal-demo-note code { font-size: 10px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+@media (max-width: 640px) { .modal-card { padding: 24px; } .modal-card h2 { font-size: 25px; } .modal-actions { justify-content: stretch; } .modal-actions .btn, .modal-actions form { flex: 1; } .modal-actions form .btn { width: 100%; } }

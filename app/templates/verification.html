@@ -85,6 +85,7 @@
     <p class="source-note">{{ verification.disclaimer }}</p>
     <div class="form-actions">
       <form method="post" action="/api/onboarding/verify"><button class="btn ghost" type="submit">Re-verify</button></form>
+      <a class="btn ghost" href="{{ url_for('flow.gov_docs') }}">Open Gov Docs Finder</a>
       <a class="btn primary" href="{{ url_for('flow.searching') }}">Continue to benefit search <span class="arrow">→</span></a>
     </div>
   </div>

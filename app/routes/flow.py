@@ -138,6 +138,17 @@ def profile_loading():
     return redirect(url_for("flow.gmail_crawl"))
 
 
+@bp.get("/onboarding/profile-building")
+@login_required
+def profile_building():
+    s = store()
+    if not s.onboarding["gmail_connected"]:
+        return redirect(url_for("flow.connect"))
+    if s.onboarding.get("gmail_scanned"):
+        return redirect(url_for("flow.profile_review"))
+    return render_template("profile_building.html", step=1)
+
+
 @bp.get("/onboarding/profile")
 @login_required
 def profile_review():
@@ -173,6 +184,23 @@ def verify():
         return redirect(url_for("flow.profile_review"))
     return render_template("verification.html", step=1, verified=s.onboarding.get("verification_ready", False),
                            verification=verification.results(s))
+
+
+@bp.get("/gov-docs")
+@login_required
+def gov_docs():
+    return render_template("gov_docs.html", verification=verification.results(store()))
+
+
+@bp.get("/gov-docs/export")
+@login_required
+def gov_docs_export():
+    from flask import jsonify
+    from ..util import now_iso
+    data = verification.results(store())
+    data["exported_at"] = now_iso()
+    data["disclaimer"] = "Synthetic registry snapshot — not a live government lookup."
+    return jsonify(data)
 
 
 @bp.get("/onboarding/searching")
@@ -247,6 +275,19 @@ def benefit_submit(benefit_id: str):
     emit("status_check", "poll_status", "succeeded", "Submitted — agency review")
     flash(f"Submitted (mock). Confirmation {app.get('confirmation_id')}.")
     return redirect(url_for("flow.progress", app_id=app["id"]))
+
+
+@bp.get("/onboarding/benefits/<benefit_id>/blank.pdf")
+@login_required
+def benefit_blank_pdf(benefit_id: str):
+    benefit = store().benefit(benefit_id)
+    if benefit is None:
+        return ("Benefit not found", 404)
+    try:
+        path = pdf_fill.blank_path(benefit_id, store())
+    except pdf_fill.PdfFillError as exc:
+        return (str(exc), 404)
+    return send_file(path, mimetype="application/pdf")
 
 
 @bp.get("/onboarding/benefits/<benefit_id>/pdf")

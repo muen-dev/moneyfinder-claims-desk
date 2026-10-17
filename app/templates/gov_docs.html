@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Gov Docs Finder · MoneyFinder{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Government documents finder</p>
+    <h1>Government records, in one place.</h1>
+    <p class="sub">Verification engine, evidence matrix, search sandbox and audit export adapted from Kenan’s Moneyfinder Verification Engine. All records are a synthetic demo snapshot.</p>
+  </div>
+  <a class="btn primary" href="{{ url_for('pages.dashboard') }}">Back to Claims Desk</a>
+</section>
+
+<div class="gov-tabs" role="tablist">
+  <button class="gov-tab active" role="tab" data-tab="engine">Verification Engine</button>
+  <button class="gov-tab" role="tab" data-tab="evidence">Evidence Matrix</button>
+  <button class="gov-tab" role="tab" data-tab="search">Search Sandbox</button>
+  <button class="gov-tab" role="tab" data-tab="connectors">Connectors &amp; APIs</button>
+  <button class="gov-tab" role="tab" data-tab="export">Export Audit Package</button>
+</div>
+
+<section class="gov-panel active" data-panel="engine">
+  <div class="verify-inputs">
+    <div><span>Legal name</span><strong>{{ verification.inputs.legal_name }}</strong></div>
+    <div><span>Premise address</span><strong>{{ verification.inputs.address }}</strong></div>
+    <div><span>NYS SLA license</span><strong>{{ verification.inputs.sla_license }}</strong></div>
+    <div><span>Tax classification</span><strong>{{ verification.inputs.tax_classification }}</strong></div>
+  </div>
+  <div class="verify-grid">
+    {% for c in verification.checks %}
+    <article class="verify-card" data-search="{{ c.label }} {{ c.headline }} {{ c.details|join(' ') }}">
+      <div class="app-top"><span class="chip integration verified">{{ c.headline }}</span><span class="muted">{{ c.label }}</span></div>
+      <dl class="verify-details">
+        {% for pair in c.details %}<div><dt>{{ pair[0] }}</dt><dd>{{ pair[1] }}</dd></div>{% endfor %}
+      </dl>
+      <p class="source-note">Source: {{ c.source }}</p>
+    </article>
+    {% endfor %}
+  </div>
+  <h2 class="verify-heading">Pre-screened incentives</h2>
+  <div class="verify-incentives">
+    {% for i in verification.incentives %}
+    <article class="verify-incentive" data-search="{{ i.name }} {{ i.form }} {{ i.status }}">
+      <div class="app-top"><span class="form">{{ i.form }}</span><span class="chip verdict eligible">{{ i.status }}</span></div>
+      <h3>{{ i.name }}</h3>
+      <div class="benefit-meta"><div><span>Estimate</span><strong>{{ i.amount_cents|money }}</strong></div><div><span>Basis</span><strong>{{ i.basis }}</strong></div></div>
+      <p class="needs">Open evidence: {{ i.gap }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="gov-panel" data-panel="evidence">
+  <div class="card">
+    <h2>Evidence matrix</h2>
+    <table class="table">
+      <thead><tr><th>Check</th><th>Status</th><th>Details</th><th>Source</th></tr></thead>
+      <tbody>
+      {% for c in verification.checks %}
+        <tr>
+          <td>{{ c.label }}</td>
+          <td><span class="chip integration verified">{{ c.headline }}</span></td>
+          <td>{% for pair in c.details %}{{ pair[0] }}: <strong>{{ pair[1] }}</strong>{% if not loop.last %} · {% endif %}{% endfor %}</td>
+          <td class="muted">{{ c.source }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="gov-panel" data-panel="search">
+  <div class="card">
+    <h2>Search the demo registry</h2>
+    <p class="muted">Search licenses, DOS standing, zoning, tax classification and pre-screened incentives. This searches the synthetic snapshot only.</p>
+    <div class="gov-search">
+      <input id="gov-search" type="text" placeholder="Try “micro brewer”, “M1-1”, “IT-636”, “DOS”">
+      <button class="btn primary" id="gov-search-btn" type="button">Search</button>
+    </div>
+    <p class="muted" id="gov-search-count"></p>
+  </div>
+  <div id="gov-results"></div>
+</section>
+
+<section class="gov-panel" data-panel="connectors">
+  <div class="arch-grid">
+    <article class="arch-card"><span class="feature-num">01 · API</span><h3>data.ny.gov</h3><p>SODA REST endpoints for NYS SLA, DOS and tax datasets. <span class="chip integration pending">demo snapshot</span></p></article>
+    <article class="arch-card"><span class="feature-num">02 · API</span><h3>data.cityofnewyork.us</h3><p>NYC Open Data SODA endpoints for BBL, zoning and IBZ overlays. <span class="chip integration pending">demo snapshot</span></p></article>
+    <article class="arch-card"><span class="feature-num">03 · Source</span><h3>tax.ny.gov / irs.gov</h3><p>Official program pages and fillable forms used by the benefits stage. <span class="chip integration verified">forms cached</span></p></article>
+    <article class="arch-card"><span class="feature-num">04 · Engine</span><h3>Verification logic</h3><p>Deterministic checks: Article 18 status, REAP 24-month rule, BBL zoning, tax classification routing.</p></article>
+  </div>
+</section>
+
+<section class="gov-panel" data-panel="export">
+  <div class="card">
+    <h2>Export audit package</h2>
+    <p>Download the synthetic verification evidence, checks, sources and pre-screened incentives as JSON for the demo audit trail.</p>
+    <a class="btn primary" href="{{ url_for('flow.gov_docs_export') }}">Download audit package (JSON)</a>
+    <p class="source-note">Synthetic snapshot · no live agency lookup · not an eligibility decision.</p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const tabs = Array.from(document.querySelectorAll('.gov-tab'));
+  const panels = Array.from(document.querySelectorAll('.gov-panel'));
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.toggle('active', x === t));
+    panels.forEach(p => p.classList.toggle('active', p.dataset.panel === t.dataset.tab));
+  }));
+  const search = document.getElementById('gov-search');
+  const btn = document.getElementById('gov-search-btn');
+  const count = document.getElementById('gov-search-count');
+  const results = document.getElementById('gov-results');
+  function runSearch() {
+    const q = (search.value || '').toLowerCase().trim();
+    const nodes = Array.from(document.querySelectorAll('[data-search]'));
+    const matches = nodes.filter(n => n.dataset.search.toLowerCase().includes(q));
+    count.textContent = q ? `${matches.length} match(es) for “${search.value}”` : '';
+    results.innerHTML = '';
+    matches.forEach(n => results.appendChild(n.cloneNode(true)));
+  }
+  btn.addEventListener('click', runSearch);
+  search.addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+</script>
+{% endblock %}

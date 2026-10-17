@@ -1,0 +1,48 @@
+{% extends "base_wizard.html" %}
+{% block title %}Building profile · MoneyFinder{% endblock %}
+{% block content %}
+<section class="wizard">
+  <div class="wizard-head">
+    <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <div class="wizard-steps">
+      <span class="wstep active"><i>1</i>Inbox</span>
+      <span class="wstep"><i>2</i>Benefits</span>
+      <span class="wstep"><i>3</i>Form &amp; send</span>
+    </div>
+    <span class="wizard-user">{{ current_user.email }}</span>
+  </div>
+
+  <div class="wizard-panel narrow center-panel">
+    <div class="agent-spinner" role="status" aria-label="Building the business profile"></div>
+    <p class="eyebrow">Step 1 of 3 · profile builder</p>
+    <h1>Building your profile.</h1>
+    <p class="lede">The agent is normalizing the crawl into a business profile: every fact tied to its email, conflicts preserved, and purchases queued for the ledger.</p>
+    <ul class="agent-log" id="build-log">
+      <li>Normalizing 25 messages into entities and vendors</li>
+      <li>Attaching 14 facts to the email that proves each one</li>
+      <li>Preserving 3 conflicts instead of guessing</li>
+      <li>Queuing 39 purchases for the 2025 ledger</li>
+      <li>Preparing the editable profile screen</li>
+    </ul>
+    <p class="error" id="build-error" hidden>Profile build failed. <a href="{{ url_for('flow.profile_building') }}">Retry</a>.</p>
+  </div>
+  <p class="wizard-foot">Every fact will show its source on the next screen.</p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const items = Array.from(document.querySelectorAll('#build-log li'));
+  let i = 0;
+  const timer = setInterval(() => { if (i < items.length) { items[i].classList.add('done'); i += 1; } }, 650);
+  setTimeout(async () => {
+    try {
+      const r = await fetch('/api/onboarding/profile');
+      if (!r.ok) throw new Error('profile');
+      clearInterval(timer); items.forEach(el => el.classList.add('done'));
+      location.href = '/onboarding/profile';
+    } catch (e) {
+      document.getElementById('build-error').hidden = false;
+    }
+  }, 3200);
+</script>
+{% endblock %}

@@ -295,3 +295,45 @@ def test_demo_reset_route_clears_state_and_session(client, app):
     assert app.extensions["store"].onboarding["gmail_connected"] is False
     # session cleared: dashboard should redirect to sign-in
     assert client.get("/dashboard").status_code == 302
+
+
+def test_profile_building_stage(client):
+    login(client)
+    client.post("/onboarding/connect")
+    r = client.get("/onboarding/profile-building")
+    assert r.status_code == 200
+    assert b"Building your profile" in r.data
+    # crawl -> builder -> profile: API marks the crawl complete
+    client.get("/api/onboarding/profile")
+    assert client.get("/onboarding/profile").status_code == 200
+
+
+def test_gov_docs_finder_and_export(client):
+    login(client)
+    client.get("/api/onboarding/profile")
+    s = client.application.extensions["store"]
+    values = {f"field_{f['key']}": f["value"] for f in s.onboarding_fields()}
+    client.post("/onboarding/profile", data=values)
+    client.post("/api/onboarding/verify")
+    page = client.get("/gov-docs")
+    assert page.status_code == 200
+    assert b"Government documents finder" in page.data
+    export = client.get("/gov-docs/export").get_json()
+    assert len(export["checks"]) == 4
+    assert len(export["incentives"]) == 2
+    assert export["exported_at"] is not None
+
+
+def test_signin_page_uses_google_sso(client):
+    page = client.get("/signin")
+    assert page.status_code == 200
+    assert b"Continue with Google" in page.data
+    assert b"Welcome back" in page.data
+
+
+def test_connect_page_has_permission_modal(client):
+    login(client)
+    page = client.get("/onboarding/connect")
+    assert page.status_code == 200
+    assert b"Allow MoneyFinder to read your Gmail?" in page.data
+    assert b"Allow read-only access" in page.data

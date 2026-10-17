@@ -118,3 +118,46 @@ def build(benefit_id: str, store) -> Path:
     if missing:
         raise PdfFillError(f"{spec['code']}: fields not found {missing}")
     return dest
+
+
+def blank_path(benefit_id: str, store) -> Path:
+    spec = FORMS.get(benefit_id)
+    if spec is None:
+        raise PdfFillError(f"no official PDF mapped for {benefit_id}")
+    path = Path(store.root) / "fixtures" / "forms" / spec["file"]
+    if not path.is_file():
+        raise PdfFillError(f"blank form missing: {path}")
+    return path
+
+
+def field_layout(benefit_id: str, store) -> dict:
+    """Real AcroForm widget positions + values, for PDF.js overlay rendering."""
+    spec = FORMS.get(benefit_id)
+    if spec is None:
+        raise PdfFillError(f"no official PDF mapped for {benefit_id}")
+    values = values_for(benefit_id, store)
+    reader = PdfReader(blank_path(benefit_id, store))
+    pages: list[dict] = []
+    fields: list[dict] = []
+    for page_number, page in enumerate(reader.pages):
+        width = float(page.mediabox.width)
+        height = float(page.mediabox.height)
+        pages.append({"page": page_number, "width": width, "height": height})
+        for annot in page.get("/Annots") or []:
+            annot = annot.get_object()
+            parent = annot.get("/Parent").get_object() if annot.get("/Parent") else None
+            name = _short(annot.get("/T") or (parent or {}).get("/T") or "")
+            if name not in values:
+                continue
+            rect = [float(v) for v in annot.get("/Rect")]
+            value = values[name]
+            kind = "checkbox" if value.startswith("/") else "text"
+            fields.append({
+                "name": name,
+                "page": page_number,
+                "rect": rect,
+                "kind": kind,
+                "value": "" if kind == "checkbox" else value,
+                "checked": (value not in {"/Off", "/No"}) if kind == "checkbox" else None,
+            })
+    return {"pages": pages, "fields": fields, "form": spec["code"]}

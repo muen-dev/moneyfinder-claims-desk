@@ -22,10 +22,10 @@ Source: https://github.com/thetradingdoc/moneyfinder (read-only reference; not m
 ## Form fill
 
 - `form-filling/demo_forms.py` — downloads the *official* IT-636/IT-212/IT-643/8846 PDFs, fills AcroForm fields with pypdf, writes `filled/*.pdf` + manifest.
-- `form-filling/fill_pdf.py` — Anchor Browser + PDF.js fills IT-636 live and reads values back (no submit).
+- `form-filling/fill_pdf.py` — Anchor Browser + PDF.js fills IT-636 live and reads values back (no submit). The PDF.js viewer approach is ported into `app/templates/form_filling.html` with local vendored PDF.js; Anchor is not required because the demo renders the cached official PDF locally.
 - `form-filling/fill.py` — fills the mock portal from a dossier; DOM read-back diff; never submits.
 
-**Port status:** the pypdf fill is **ported** into `app/services/pdf_fill.py`:
+**Port status:** the pypdf fill is **ported** into `app/services/pdf_fill.py`, and the PDF.js typing animation is **ported** into `app/templates/form_filling.html`:
 - blank official PDFs cached in `fixtures/forms/`
 - values derived from onboarding profile + demo business
 - route `GET /onboarding/benefits/<benefit_id>/pdf` returns the filled PDF

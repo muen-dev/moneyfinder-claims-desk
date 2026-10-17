@@ -49,6 +49,7 @@ def create_app() -> Flask:
                 ("/dashboard", "Claims Desk"),
                 ("/onboarding", "Onboarding"),
                 ("/eligibility", "Eligibility"),
+                ("/gov-docs", "Gov Docs"),
                 ("/books", "Books"),
                 ("/run-history", "Run History"),
                 ("/settings", "Settings"),

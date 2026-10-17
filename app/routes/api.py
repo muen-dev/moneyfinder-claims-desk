@@ -227,6 +227,19 @@ def onboarding_fill(benefit_id: str):
               pdf_url=url_for("flow.benefit_pdf", benefit_id=benefit_id))
 
 
+@bp.get("/onboarding/benefits/<benefit_id>/fields")
+def onboarding_fields(benefit_id: str):
+    s = store()
+    benefit = s.benefit(benefit_id)
+    if benefit is None:
+        return jsonify({"error": {"code": "not_found", "message": "benefit not found"}}), 404
+    try:
+        layout = pdf_fill.field_layout(benefit_id, s)
+    except pdf_fill.PdfFillError as exc:
+        return jsonify({"error": {"code": "layout_failed", "message": str(exc)}}), 422
+    return ok(layout=layout, pdf_url=url_for("flow.benefit_blank_pdf", benefit_id=benefit_id))
+
+
 @bp.post("/onboarding/benefits/<benefit_id>/submit")
 def onboarding_submit(benefit_id: str):
     s = store()

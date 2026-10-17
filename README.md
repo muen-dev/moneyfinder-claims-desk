@@ -14,7 +14,7 @@
 |---|---|---|
 | `/` | Landing page + public nav | static |
 | `/signin` | Demo auth (email only), session, guarded routes | demo user |
-| `/onboarding` | 3 phases with explicit agent stages: Gmail consent → **Gmail crawl** → profile review → **verification** (SLA/DOS/zoning/tax) → benefit cards → **form fill** (real PDF) → approval → progress | onboarding fixture + inbox + `fixtures/verification.json` + `fixtures/forms/` |
+| `/onboarding` | Google SSO → **Gmail permission modal** → **Gmail crawl** → **profile builder** → profile review → **verification** (SLA/DOS/zoning/tax) → benefit cards → **real PDF fill** (PDF.js + pypdf) → approval → progress | onboarding fixture + inbox + `fixtures/verification.json` + `fixtures/forms/` |
 | `/dashboard` | Four-column claims desk: Found / In process / Approved / Paid; totals; next actions | applications fixture |
 | `/applications/<id>` | Amount, evidence, event log, allowed status transitions | fixture + status machine |
 | `/eligibility` | 7 programs with verdicts, citations, `as_of`; WOTC flagged expired | cached official-page excerpts |
@@ -23,6 +23,10 @@
 | `/settings` | integration status, modes, reset demo | env + fixtures |
 
 Everything is backed by **fixtures**, so the demo works with no network, no model key and no PRISM key. With keys, the same run emits real **Nicrron** calls and **PRISM** traces.
+
+## Provenance
+
+Every public number on the landing page is sourced in [`docs/PROVENANCE.md`](docs/PROVENANCE.md), including the 2011 $15B tax-credit estimate, the derived 89%/11% split, and the personal unclaimed-funds headlines.
 
 ## Reuse from `thetradingdoc/moneyfinder`
 
