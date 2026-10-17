@@ -1,13 +1,13 @@
 {% extends "base_public.html" %}
 {% block title %}MoneyFinder — the paperwork between your business and its money{% endblock %}
 {% block content %}
-<section class="hero">
-  <div class="hero-blob blob-lavender"></div>
-  <div class="hero-blob blob-peach"></div>
-  <div class="hero-blob blob-mint"></div>
+<section class="hero hero-photo-bg">
+  <img class="hero-bg" src="{{ url_for('static', filename='img/hero-marisol.jpg') }}"
+       alt="Marisol Vance, founder of Gowanus Kettle Brewing Co., in her Brooklyn taproom">
+  <div class="hero-shade"></div>
   <div class="hero-inner">
     <div class="hero-copy">
-      <p class="eyebrow">Government money for small business</p>
+      <p class="eyebrow light">Government money for small business</p>
       <h1 class="display"><span>Your money.</span><span>Our paperwork.</span></h1>
       <p class="lede">MoneyFinder learns your business from its inbox, verifies licenses and public programs against agency sources, fills the real forms, and tracks every claim until the deposit clears. You approve every send.</p>
       <div class="hero-actions">
@@ -16,17 +16,30 @@
       </div>
       <p class="trust-line">Read-only inbox · synthetic demo · nothing is filed without your approval</p>
     </div>
-    <div class="hero-visual">
-      <figure class="hero-photo">
-        <img src="{{ url_for('static', filename='img/hero-marisol.jpg') }}"
-             alt="Marisol Vance, founder of Gowanus Kettle Brewing Co., standing in her Brooklyn taproom"
-             width="1368" height="768">
-        <figcaption class="hero-photo-caption">
-          <span class="hero-photo-name">Marisol Vance</span>
-          <span class="hero-photo-role">Founder · Gowanus Kettle Brewing Co. · Brooklyn, NY</span>
-        </figcaption>
-      </figure>
-      <p class="mock-note">A 14-person brewery. A 25-message inbox. Four programs it already qualified for.</p>
+
+    <div class="hero-phone-wrap">
+      <div class="iphone" aria-label="Mock iPhone showing potential savings">
+        <div class="iphone-frame">
+          <span class="iphone-island"></span>
+          <div class="iphone-screen">
+            <div class="iphone-status"><span>9:41</span><span>●●●&nbsp; ▰</span></div>
+            <div class="iphone-app-head"><span class="iphone-mark">M</span><span>MoneyFinder</span></div>
+            <span class="iphone-badge">✓ Found</span>
+            <p class="iphone-label">Potential savings</p>
+            <strong class="iphone-amount">$45,737</strong>
+            <p class="iphone-meta">4 programs · synthetic demo</p>
+            <div class="iphone-progress"><span></span></div>
+            <div class="iphone-rows">
+              <div><span>IT-636</span><b>$13,471</b></div>
+              <div><span>IT-643</span><b>$15,075</b></div>
+              <div><span>IT-212</span><b>$7,460</b></div>
+            </div>
+            <div class="iphone-cta">View my claims <span>→</span></div>
+            <p class="iphone-fine">Synthetic demo · not money received</p>
+          </div>
+        </div>
+      </div>
+      <p class="hero-photo-credit">Photo: Andrew Teoh / Unsplash</p>
     </div>
   </div>
 </section>
