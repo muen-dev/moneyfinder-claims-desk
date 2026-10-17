@@ -805,3 +805,9 @@ select:focus, input:focus { outline: 2px solid var(--ink); outline-offset: 1px; 
   .iphone-amount { font-size: 34px; }
   .hero-photo-credit { right: 0; bottom: 0; }
 }
+
+
+/* ---------- brand CTA ---------- */
+.btn.brand { background: var(--lavender-strong); border-color: var(--lavender-strong); color: var(--ink); box-shadow: 0 10px 28px rgba(213, 201, 248, .28); }
+.btn.brand:hover { background: #c7b8f4; border-color: #c7b8f4; }
+.cta-band .btn.brand { box-shadow: 0 12px 30px rgba(213, 201, 248, .4); }
