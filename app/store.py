@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import threading
 from pathlib import Path
 
@@ -23,7 +24,14 @@ class Store:
     def __init__(self, root: str | Path):
         self.root = Path(root)
         self.fixtures = self.root / "fixtures"
-        self.data = self.root / "data"
+        # Vercel/serverless filesystems are read-only except /tmp.
+        data_override = os.getenv("MONEYFINDER_DATA_DIR")
+        if data_override:
+            self.data = Path(data_override)
+        elif os.getenv("VERCEL"):
+            self.data = Path("/tmp/moneyfinder-data")
+        else:
+            self.data = self.root / "data"
         self.lock = threading.RLock()
         self.reset()
 
