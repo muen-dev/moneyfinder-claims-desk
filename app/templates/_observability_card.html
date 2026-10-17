@@ -35,8 +35,8 @@
   const body = document.getElementById('obs-body');
   const $ = (id) => document.getElementById(id);
   const fmt = (v) => (v === null || v === undefined ? '—' : v);
-  let collapsed = false;
-  try { collapsed = localStorage.getItem('mf-obs-collapsed') === '1'; } catch (e) {}
+  let collapsed = true;
+  try { const stored = localStorage.getItem('mf-obs-collapsed'); if (stored !== null) collapsed = stored === '1'; } catch (e) {}
   const renderCollapsed = () => {
     card.classList.toggle('collapsed', collapsed);
     toggle.setAttribute('aria-expanded', String(!collapsed));

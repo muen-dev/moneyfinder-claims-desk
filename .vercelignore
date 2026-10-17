@@ -6,3 +6,6 @@ data
 docs/proofs
 .env
 .env.*
+.vercel-cli
+.vercel
+.env.local
