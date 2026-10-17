@@ -66,11 +66,11 @@ def signin():
 
 @bp.get("/demo/reset")
 def demo_reset():
-    """Demo-only reset: clears onboarding/app state and the session, then returns to sign-in."""
+    """Demo-only reset: clears onboarding/app state and the session, then returns home."""
     store().reset()
     session.clear()
-    flash("Demo reset. Sign in to start from the Gmail consent screen.")
-    return redirect(url_for("flow.signin"))
+    flash("Demo reset. Start again from the homepage.")
+    return redirect(url_for("flow.landing"))
 
 
 @bp.get("/signout")

@@ -98,8 +98,8 @@ def settings():
 @login_required
 def settings_reset():
     store().reset()
-    flash("Demo state reset to fixtures.")
-    return redirect(url_for("pages.settings"))
+    flash("Demo state reset to fixtures. Returning home.")
+    return redirect(url_for("flow.landing"))
 
 
 @bp.get("/applications/<app_id>")

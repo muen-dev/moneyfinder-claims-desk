@@ -294,7 +294,7 @@ def test_demo_reset_route_clears_state_and_session(client, app):
     client.post("/onboarding/connect")
     assert app.extensions["store"].onboarding["gmail_connected"] is True
     r = client.get("/demo/reset")
-    assert r.status_code == 302 and "/signin" in r.headers["Location"]
+    assert r.status_code == 302 and r.headers["Location"].endswith("/")
     assert app.extensions["store"].onboarding["gmail_connected"] is False
     # session cleared: dashboard should redirect to sign-in
     assert client.get("/dashboard").status_code == 302
