@@ -1,5 +1,7 @@
 # MoneyFinder Claims Desk
 
+**Live demo:** https://moneyfinder-claims-desk.vercel.app
+
 **MONEY TALKS 2 · Money Operations track · October 17, 2026**
 
 > Your business is leaving tax credits and rebates on the table. MoneyFinder learns the business from its inbox, checks public-agency eligibility with citations, fills the paperwork with provenance, tracks every application until the deposit clears, and prepares the accountant packet — without ever pretending an estimate is money received.

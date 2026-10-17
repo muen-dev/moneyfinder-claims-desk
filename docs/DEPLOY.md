@@ -20,12 +20,27 @@ that does not depend on this laptop's tunnel, deploy the Flask app to a small we
 The repo includes a `Dockerfile`. Create a Railway project from the GitHub repo;
 Railway builds the image and exposes a stable URL. Set the same optional env vars.
 
-## Vercel
+## Vercel (current live deployment)
 
-Vercel is great for the static marketing page but this demo is a stateful Flask app
-(onboarding state, generated PDFs, fixture edits). Serverless filesystem state is
-ephemeral, so use Render/Railway for the full demo. If you only need a stable
-redirect or the landing page, a Vercel static project is fine.
+The repo is Vercel-ready:
+
+- `api/index.py` exports the Flask WSGI app.
+- `vercel.json` rewrites all paths to the function while preserving the original path.
+- `app/services/session_state.py` persists onboarding/application state per browser
+  session in Upstash Redis (`KV_REST_API_URL`, `KV_REST_API_TOKEN`), so the flow
+  survives Vercel serverless instance switches.
+- Generated PDFs are written under `/tmp`; downloads still rebuild from the
+  official cached blank PDF.
+
+Deploy:
+
+```bash
+vercel link
+vercel deploy --prod
+```
+
+Project: `moneyfinder-claims-desk` under Thuy Pham's projects.
+Live: https://moneyfinder-claims-desk.vercel.app
 
 ## Caveats
 
