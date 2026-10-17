@@ -12,6 +12,7 @@
 <body class="wizard-page">
   <div class="banner" role="status">Synthetic demo — not tax advice. Estimates are not money received. · <a href="{{ url_for('flow.demo_reset') }}">Reset demo</a></div>
   {% block content %}{% endblock %}
+  {% include "_observability_card.html" %}
   {% block scripts %}{% endblock %}
 </body>
 </html>

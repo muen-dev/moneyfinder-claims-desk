@@ -265,3 +265,77 @@ def onboarding_verify():
         _emit(f"verify_{check['id']}", "verify_registry", f"{check['label']}: {check['headline']}")
     _emit("verify_incentives", "pre_screen_incentives", f"{len(data.get('incentives', []))} pre-screened incentives")
     return ok(verification=data)
+
+
+@bp.get("/observability")
+def observability():
+    """Live sponsor status: PRISM trace + real Nicrron model/usage.
+
+    PRISM numbers come from the local tracer snapshot immediately; the trace is
+    also read back from PRISM's span API when available. Nicrron model/usage is
+    a real (cached) gateway probe, never a hard-coded sponsor label.
+    """
+    import time
+    from flask import session
+
+    tracing = current_app.extensions.get("tracing")
+    snap = tracing.snapshot() if tracing is not None else {
+        "enabled": False, "error": "tracer not initialised", "project_id": None, "host": None,
+        "trace_id": None, "session_id": None, "stage": None, "model": None, "spans": 0,
+        "tool_calls": 0, "llm_calls": 0, "tokens_in": None, "tokens_out": None,
+        "latency_ms": None, "exported": 0,
+    }
+    run_id = session.get("onboarding_run_id")
+    prism = Prism()
+    ingested = None
+    if tracing is not None and snap.get("trace_id") and snap.get("enabled"):
+        now = time.time()
+        if getattr(tracing, "_prism_cache", None) is None or now - getattr(tracing, "_prism_cache_at", 0) > 4:
+            tracing._prism_cache = prism.fetch_trace(snap["trace_id"])
+            tracing._prism_cache_at = now
+        payload = getattr(tracing, "_prism_cache", None)
+        if payload is not None:
+            ingested = True
+
+    nicrron = Nicrron()
+    if current_app.config.get("TESTING"):
+        probe = {"ok": False, "detail": "disabled in tests", "model": nicrron.model, "base_url": nicrron.base}
+    else:
+        probe = nicrron.cached_probe()
+    usage = probe.get("usage") or {}
+    last = Nicrron.last_result or {}
+
+    return ok(
+        session=run_id,
+        prism={
+            "name": "PRISM",
+            "status": "connected" if snap.get("enabled") else "unavailable",
+            "project_id": snap.get("project_id"),
+            "host": snap.get("host"),
+            "trace_id": snap.get("trace_id"),
+            "trace_short": (snap.get("trace_id") or "")[:8],
+            "session_id": run_id or snap.get("session_id"),
+            "stage": snap.get("stage"),
+            "spans": snap.get("spans") or 0,
+            "tool_calls": snap.get("tool_calls") or 0,
+            "llm_calls": snap.get("llm_calls") or 0,
+            "tokens_in": snap.get("tokens_in"),
+            "tokens_out": snap.get("tokens_out"),
+            "latency_ms": snap.get("latency_ms"),
+            "exported_local": snap.get("exported") or 0,
+            "ingested": ingested,
+            "error": snap.get("error"),
+        },
+        nicrron={
+            "name": "Nicrron",
+            "status": "ready" if probe.get("ok") else ("configured" if nicrron.enabled else "unavailable"),
+            "model": probe.get("model") or last.get("model") or nicrron.model,
+            "requested_model": nicrron.model,
+            "base_url": nicrron.base,
+            "tokens_in": usage.get("prompt_tokens"),
+            "tokens_out": usage.get("completion_tokens"),
+            "latency_ms": probe.get("latency_ms"),
+            "detail": probe.get("detail"),
+            "checked_at": probe.get("at") or last.get("at"),
+        },
+    )

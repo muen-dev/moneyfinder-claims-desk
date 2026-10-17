@@ -1,0 +1,82 @@
+<aside class="obs-card" id="obs-card" aria-live="polite">
+  <button class="obs-head" id="obs-toggle" type="button" aria-expanded="true">
+    <span class="obs-live"><i></i> Agent observability</span>
+    <span class="obs-chevron">−</span>
+  </button>
+  <div class="obs-body" id="obs-body">
+    <div class="obs-provider">
+      <div class="obs-brand"><span class="obs-dot" id="prism-dot"></span> PRISM</div>
+      <div class="obs-status" id="prism-status">connecting…</div>
+      <div class="obs-trace" id="prism-trace">trace —</div>
+      <div class="obs-stats">
+        <div><b id="obs-spans">0</b><span>spans</span></div>
+        <div><b id="obs-tools">0</b><span>tools</span></div>
+        <div><b id="obs-llms">0</b><span>llm</span></div>
+      </div>
+      <div class="obs-foot" id="prism-foot">project —</div>
+    </div>
+    <div class="obs-provider">
+      <div class="obs-brand">Nicrron <span class="obs-chip" id="nicrron-status">…</span></div>
+      <div class="obs-model" id="nicrron-model">nicrron/auto</div>
+      <div class="obs-meta" id="nicrron-tokens">tokens —</div>
+      <div class="obs-stats">
+        <div><b id="obs-latency">—</b><span>latency</span></div>
+        <div><b id="obs-tokens-in">—</b><span>in</span></div>
+        <div><b id="obs-tokens-out">—</b><span>out</span></div>
+      </div>
+      <div class="obs-foot" id="nicrron-foot">api.nicrron.ai</div>
+    </div>
+  </div>
+</aside>
+<script>
+(() => {
+  const card = document.getElementById('obs-card');
+  const toggle = document.getElementById('obs-toggle');
+  const body = document.getElementById('obs-body');
+  const $ = (id) => document.getElementById(id);
+  const fmt = (v) => (v === null || v === undefined ? '—' : v);
+  let collapsed = false;
+  try { collapsed = localStorage.getItem('mf-obs-collapsed') === '1'; } catch (e) {}
+  const renderCollapsed = () => {
+    card.classList.toggle('collapsed', collapsed);
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+    toggle.querySelector('.obs-chevron').textContent = collapsed ? '+' : '−';
+  };
+  renderCollapsed();
+  toggle.addEventListener('click', () => {
+    collapsed = !collapsed;
+    try { localStorage.setItem('mf-obs-collapsed', collapsed ? '1' : '0'); } catch (e) {}
+    renderCollapsed();
+  });
+
+  async function load() {
+    try {
+      const r = await fetch('/api/observability', { headers: { 'Accept': 'application/json' } });
+      if (!r.ok) throw new Error('status ' + r.status);
+      const d = await r.json();
+      const p = d.prism || {};
+      const n = d.nicrron || {};
+      $('prism-status').textContent = p.status === 'connected' ? 'connected · live trace' : 'not configured';
+      $('prism-dot').className = 'obs-dot ' + (p.status === 'connected' ? 'on' : '');
+      $('prism-trace').textContent = p.trace_id ? ('trace ' + (p.trace_short || p.trace_id.slice(0, 8))) : 'trace —';
+      $('obs-spans').textContent = fmt(p.spans);
+      $('obs-tools').textContent = fmt(p.tool_calls);
+      $('obs-llms').textContent = fmt(p.llm_calls);
+      $('prism-foot').textContent = (p.ingested ? 'PRISM readback · ' : 'export pending · ') + (p.project_id ? p.project_id.slice(0, 8) + '…' : 'project —');
+      $('nicrron-status').textContent = n.status || '…';
+      $('nicrron-model').textContent = n.model || 'nicrron/auto';
+      $('nicrron-tokens').textContent = (n.tokens_in != null || n.tokens_out != null)
+        ? `tokens ${fmt(n.tokens_in)} in / ${fmt(n.tokens_out)} out`
+        : (n.detail || 'gateway probe');
+      $('obs-latency').textContent = n.latency_ms != null ? n.latency_ms + 'ms' : '—';
+      $('obs-tokens-in').textContent = fmt(n.tokens_in);
+      $('obs-tokens-out').textContent = fmt(n.tokens_out);
+      $('nicrron-foot').textContent = n.base_url ? n.base_url.replace('https://', '') : 'api.nicrron.ai';
+    } catch (e) {
+      $('prism-status').textContent = 'observability offline';
+    }
+  }
+  load();
+  setInterval(load, 3000);
+})();
+</script>

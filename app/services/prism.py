@@ -69,6 +69,21 @@ class Prism:
             self._failed = True
         return False
 
+    def fetch_trace(self, trace_id: str) -> dict | None:
+        """Read a trace back from PRISM so the status card shows real ingested data."""
+        if not self.enabled or not trace_id:
+            return None
+        req = urllib.request.Request(
+            f"{self.host}/api/spans/{trace_id}",
+            headers={"X-PRISMtrace-Key": self.key},
+            method="GET",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=3) as resp:
+                return json.loads(resp.read().decode())
+        except Exception as exc:  # noqa: BLE001
+            return None
+
     def handshake(self) -> dict:
         if not self.enabled:
             return {"ok": False, "detail": "not configured"}

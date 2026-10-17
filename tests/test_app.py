@@ -348,3 +348,20 @@ def test_signin_resets_onboarding_to_gmail_start(client, app):
     assert app.extensions["store"].onboarding["gmail_connected"] is False
     r = client.get("/onboarding")
     assert r.status_code == 302 and "/onboarding/connect" in r.headers["Location"]
+
+
+def test_observability_endpoint_reports_prism_and_nicrron(client):
+    data = client.get("/api/observability").get_json()
+    assert data["prism"]["name"] == "PRISM"
+    assert data["prism"]["project_id"]
+    assert data["prism"]["status"] in {"connected", "unavailable"}
+    assert data["nicrron"]["name"] == "Nicrron"
+    assert data["nicrron"]["model"]
+
+
+def test_onboarding_pages_include_observability_card(client):
+    login(client)
+    page = client.get("/onboarding/connect")
+    assert b"Agent observability" in page.data
+    assert b"PRISM" in page.data
+    assert b"Nicrron" in page.data
