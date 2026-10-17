@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 
-from ..services import applications, eligibility, evidence, ledger, packet
+from ..auth import login_required
+from ..services import applications, eligibility, ledger, packet
 from ..services.nicrron import Nicrron
 from ..services.orchestrator import start_run
 from ..services.prism import Prism
@@ -19,12 +20,8 @@ def services():
     return Nicrron(), Prism()
 
 
-@bp.get("/")
-def home():
-    return redirect(url_for("pages.dashboard"))
-
-
 @bp.get("/dashboard")
+@login_required
 def dashboard():
     s = store()
     pipe = applications.pipeline(s.applications)
@@ -37,26 +34,15 @@ def dashboard():
     )
 
 
-@bp.get("/onboarding")
-def onboarding():
-    s = store()
-    return render_template("onboarding.html", business=s.business, scan=None)
-
-
-@bp.post("/onboarding/scan")
-def onboarding_scan():
-    s = store()
-    scan = evidence.scan(s)
-    return render_template("onboarding.html", business=s.business, scan=scan)
-
-
 @bp.get("/eligibility")
+@login_required
 def eligibility_page():
     s = store()
     return render_template("eligibility.html", verdicts=eligibility.verdicts(s))
 
 
 @bp.get("/books")
+@login_required
 def books():
     s = store()
     return render_template(
@@ -69,6 +55,7 @@ def books():
 
 
 @bp.post("/books/packet")
+@login_required
 def books_packet():
     s = store()
     pkt = packet.build(s)
@@ -77,12 +64,14 @@ def books_packet():
 
 
 @bp.get("/run-history")
+@login_required
 def run_history():
     s = store()
     return render_template("run_history.html", runs=s.runs, integrations=[services()[1].status()])
 
 
 @bp.post("/run")
+@login_required
 def run_analysis():
     s = store()
     nicrron, prism = services()
@@ -92,6 +81,7 @@ def run_analysis():
 
 
 @bp.get("/settings")
+@login_required
 def settings():
     s = store()
     nicrron, prism = services()
@@ -105,6 +95,7 @@ def settings():
 
 
 @bp.post("/settings/reset")
+@login_required
 def settings_reset():
     store().reset()
     flash("Demo state reset to fixtures.")
@@ -112,6 +103,7 @@ def settings_reset():
 
 
 @bp.get("/applications/<app_id>")
+@login_required
 def application_detail(app_id: str):
     s = store()
     app = s.application(app_id)
@@ -124,6 +116,7 @@ def application_detail(app_id: str):
 
 
 @bp.post("/applications/<app_id>/transition")
+@login_required
 def application_transition(app_id: str):
     s = store()
     to_status = request.form.get("to_status", "")

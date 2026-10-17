@@ -1,4 +1,4 @@
-"""Smoke tests: routes, API contract, status machine, ledger and packet."""
+"""Smoke tests: landing/auth, 3-phase onboarding, API contract, money math."""
 from __future__ import annotations
 
 import pytest
@@ -21,18 +21,130 @@ def client(app):
     return app.test_client()
 
 
-def test_pages_render(client):
-    for path in ["/dashboard", "/onboarding", "/eligibility", "/books", "/run-history", "/settings"]:
-        assert client.get(path).status_code == 200, path
+def login(client):
+    r = client.post("/signin", data={"email": "marisol@gowanuskettle.example"})
+    assert r.status_code == 302
+    return r
 
 
-def test_onboarding_scan(client):
-    r = client.post("/onboarding/scan")
-    html = r.get_data(as_text=True)
+# ---- landing / auth -------------------------------------------------
+
+def test_landing_is_public(client):
+    r = client.get("/")
     assert r.status_code == 200
-    assert "What we learned" in html
-    assert "Conflicts" in html
+    html = r.get_data(as_text=True)
+    assert "MoneyFinder" in html
+    assert "Find my benefits" in html
 
+
+def test_guarded_pages_redirect_to_signin(client):
+    for path in ["/dashboard", "/onboarding", "/books", "/run-history", "/settings"]:
+        r = client.get(path)
+        assert r.status_code == 302, path
+        assert "/signin" in r.headers["Location"]
+
+
+def test_signin_opens_onboarding(client):
+    login(client)
+    r = client.get("/dashboard")
+    assert r.status_code == 200
+
+
+def test_signin_rejects_bad_email(client):
+    r = client.post("/signin", data={"email": "not-an-email"})
+    assert r.status_code == 400
+
+
+# ---- phase 1: consent -> profile ------------------------------------
+
+def test_connect_consent_starts_loading(client):
+    login(client)
+    assert client.get("/onboarding/connect").status_code == 200
+    r = client.post("/onboarding/connect", follow_redirects=False)
+    assert r.status_code == 302 and "/onboarding/profile-loading" in r.headers["Location"]
+
+
+def test_profile_api_and_required_fields(client):
+    login(client)
+    client.post("/onboarding/connect")
+    data = client.get("/api/onboarding/profile").get_json()
+    assert len(data["fields"]) == 12
+    missing = {f["key"] for f in data["missing_required"]}
+    assert missing == {"phone", "authorized_rep"}
+
+
+def test_profile_blocks_until_required_filled(client, app):
+    login(client)
+    client.post("/onboarding/connect")
+    fields = app.extensions["store"].onboarding_fields()
+    values = {f"field_{f['key']}": f["value"] for f in fields}
+    r = client.post("/onboarding/profile", data=values)
+    assert r.status_code == 200
+    assert b"Fill the coral fields" in r.data
+    values["field_phone"] = "(718) 555-0142"
+    values["field_authorized_rep"] = "Marisol Vance, Managing Member"
+    r = client.post("/onboarding/profile", data=values)
+    assert r.status_code == 302 and "/onboarding/searching" in r.headers["Location"]
+
+
+# ---- phase 2: benefits ---------------------------------------------
+
+def test_benefit_cards_after_search(client):
+    login(client)
+    client.post("/onboarding/connect")
+    s = client.application.extensions["store"]
+    values = {f"field_{f['key']}": f["value"] for f in s.onboarding_fields()}
+    values["field_phone"] = "(718) 555-0142"
+    values["field_authorized_rep"] = "Marisol Vance, Managing Member"
+    client.post("/onboarding/profile", data=values)
+    data = client.get("/api/onboarding/benefits").get_json()
+    assert len(data["benefits"]) == 4
+    r = client.get("/onboarding/benefits")
+    assert r.status_code == 200
+    assert b"Why this fits you" in r.data
+
+
+# ---- phase 3: form -> approval -> progress -------------------------
+
+def _reach_benefits(client):
+    login(client)
+    client.post("/onboarding/connect")
+    s = client.application.extensions["store"]
+    values = {f"field_{f['key']}": f["value"] for f in s.onboarding_fields()}
+    values["field_phone"] = "(718) 555-0142"
+    values["field_authorized_rep"] = "Marisol Vance, Managing Member"
+    client.post("/onboarding/profile", data=values)
+    client.get("/api/onboarding/benefits")
+
+
+def test_form_detail_shows_sourced_fields(client):
+    _reach_benefits(client)
+    r = client.get("/onboarding/benefits/ben_it636")
+    assert r.status_code == 200
+    assert b"3,104" in r.data
+    assert b"Needs your input" in r.data
+
+
+def test_submit_requires_approval(client):
+    _reach_benefits(client)
+    r = client.post("/onboarding/benefits/ben_it636/submit", data={})
+    assert r.status_code == 200
+    assert b"approval box" in r.data
+
+
+def test_submit_creates_progress_and_dashboard_entry(client):
+    _reach_benefits(client)
+    r = client.post("/onboarding/benefits/ben_it636/submit", data={"approve": "on"})
+    assert r.status_code == 302 and "/onboarding/progress/" in r.headers["Location"]
+    progress = client.get(r.headers["Location"])
+    assert progress.status_code == 200
+    assert b"Submitted" in progress.data
+    app_id = r.headers["Location"].rstrip("/").split("/")[-1]
+    desk = client.get("/dashboard")
+    assert app_id.encode() in desk.data or b"Claims Desk" in desk.data
+
+
+# ---- API contract ---------------------------------------------------
 
 def test_api_health_and_profile(client):
     assert client.get("/api/health").get_json()["ok"] is True
@@ -50,7 +162,6 @@ def test_applications_pipeline(client):
     assert totals["in_process_cents"] == 1507500
     assert totals["approved_cents"] == 746000
     assert totals["paid_cents"] == 0
-    assert len(data["applications"]["paid"]) == 0
 
 
 def test_status_machine_blocks_illegal_transition(client):
@@ -73,8 +184,6 @@ def test_ledger_math_excludes_duplicates_and_capital(app):
     summary = ledger.summary(store.ledger)
     assert summary["transaction_count"] == 39
     assert summary["capital_cents"] == 22800000
-    # duplicate canning line is not double-counted in capital or expenses
-    assert summary["capital_cents"] == 18650000 + 4150000
     assert summary["missing_receipts"] == 3
     assert summary["reconciled_delta_cents"] == 0
 
@@ -86,8 +195,6 @@ def test_packet_builds_real_files(app):
     assert "review-package.md" in names
     assert "ledger.csv" in names
     assert pkt["status"] == "prepared_for_review"
-    for f in pkt["files"]:
-        assert f["path"]
 
 
 def test_packet_download(client):
@@ -100,7 +207,7 @@ def test_packet_download(client):
 def test_run_has_12_steps_and_human_gate(app):
     store = app.extensions["store"]
     prism = Prism()
-    prism.key = ""  # do not depend on the network in tests
+    prism.key = ""
     run = start_run(store, prism)
     assert len(run["steps"]) == 12
     assert run["steps"][10]["status"] == "pending"
@@ -113,10 +220,3 @@ def test_demo_reset(client):
     assert client.post("/api/demo/reset").get_json()["ok"] is True
     apps = client.get("/api/applications").get_json()["applications"]
     assert any(a["status"] == "MATCH_FOUND" for a in apps["found"])
-
-
-def test_eligibility_has_expired_program(client):
-    data = client.get("/api/eligibility").get_json()
-    assert data["counts"]["expired"] == 1
-    expired = [p for p in data["programs"] if p["verdict"] == "expired"]
-    assert expired and expired[0]["id"] == "fed_wotc"

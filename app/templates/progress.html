@@ -1,0 +1,44 @@
+{% extends "base_wizard.html" %}
+{% block title %}Submitted · MoneyFinder{% endblock %}
+{% block content %}
+<section class="wizard">
+  <div class="wizard-head">
+    <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <div class="wizard-steps">
+      <span class="wstep done"><i>1</i>Inbox</span>
+      <span class="wstep done"><i>2</i>Benefits</span>
+      <span class="wstep done"><i>3</i>Form &amp; send</span>
+    </div>
+    <span class="wizard-user">{{ current_user.email }}</span>
+  </div>
+
+  <div class="wizard-panel narrow">
+    <div class="progress-card">
+      <div class="check-circle">✓</div>
+      <p class="eyebrow">Submitted · mock</p>
+      <h1>{{ app.form }} is on its way.</h1>
+      <p class="lede">{{ app.program }} · {{ app.agency }}</p>
+      <div class="confirmation">
+        <span>Confirmation</span>
+        <strong>{{ app.confirmation_id }}</strong>
+      </div>
+      <ol class="progress-list">
+        {% for s in steps %}
+        <li class="{{ 'done' if loop.index0 < 3 else ('current' if loop.index0 == 3 else '') }}">
+          <i>{{ loop.index }}</i><span>{{ s }}</span>
+        </li>
+        {% endfor %}
+      </ol>
+      <div class="progress-meta">
+        <div><span>Estimated credit</span><strong>{{ app.amount_estimate_cents|money }}</strong></div>
+        <div><span>Next check</span><strong>5–10 business days</strong></div>
+      </div>
+      <div class="progress-actions">
+        <a class="btn primary" href="{{ url_for('pages.dashboard') }}">Go to dashboard <span class="arrow">→</span></a>
+        <a class="btn ghost" href="{{ url_for('flow.benefits') }}">Explore another benefit</a>
+      </div>
+    </div>
+  </div>
+  <p class="wizard-foot">Submitted is not approved · approved is not paid · a deposit must be matched</p>
+</section>
+{% endblock %}

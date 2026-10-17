@@ -1,0 +1,49 @@
+{% extends "base_wizard.html" %}
+{% block title %}Finding benefits · MoneyFinder{% endblock %}
+{% block content %}
+<section class="wizard">
+  <div class="wizard-head">
+    <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <div class="wizard-steps">
+      <span class="wstep done"><i>1</i>Inbox</span>
+      <span class="wstep active"><i>2</i>Benefits</span>
+      <span class="wstep"><i>3</i>Form &amp; send</span>
+    </div>
+    <span class="wizard-user">{{ current_user.email }}</span>
+  </div>
+
+  <div class="wizard-panel narrow center-panel">
+    <div class="agent-spinner" role="status" aria-label="Agent is searching public benefit programs"></div>
+    <h1>Searching public programs…</h1>
+    <p class="lede">The agent is reading official agency pages and matching their requirements to your profile. Every result will cite its source.</p>
+    <ul class="agent-log" id="agent-log">
+      <li data-step="0">Reading NYS Department of Taxation and Finance pages</li>
+      <li data-step="1">Checking IRS and NYSERDA programs</li>
+      <li data-step="2">Matching requirements to your facts</li>
+      <li data-step="3">Removing expired programs</li>
+    </ul>
+    <p class="error" id="load-error" hidden>The search could not be loaded. <a href="{{ url_for('flow.benefits') }}">Try again</a>.</p>
+  </div>
+  <p class="wizard-foot">Eligibility is a lead for review, not a filing decision</p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const steps = Array.from(document.querySelectorAll('#agent-log li'));
+  let i = 0;
+  const timer = setInterval(() => {
+    if (i < steps.length) { steps[i].classList.add('done'); i += 1; }
+  }, 600);
+  setTimeout(async () => {
+    try {
+      const r = await fetch('/api/onboarding/benefits');
+      if (!r.ok) throw new Error('benefits');
+      clearInterval(timer);
+      steps.forEach(s => s.classList.add('done'));
+      location.href = '/onboarding/benefits';
+    } catch (e) {
+      document.getElementById('load-error').hidden = false;
+    }
+  }, 2600);
+</script>
+{% endblock %}

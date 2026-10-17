@@ -1,0 +1,23 @@
+{% extends "base_public.html" %}
+{% block title %}Sign in · MoneyFinder{% endblock %}
+{% block content %}
+<section class="auth-wrap">
+  <div class="hero-blob blob-lavender"></div>
+  <div class="hero-blob blob-peach"></div>
+  <div class="auth-card">
+    <a class="wordmark center" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <h1>Sign in to the demo</h1>
+    <p class="auth-sub">Use any email. This is a synthetic demo — no password, no Google account, no real inbox.</p>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}<div class="flash error">{{ messages[0] }}</div>{% endif %}
+    {% endwith %}
+    <form method="post" action="{{ url_for('flow.signin') }}" class="auth-form">
+      <label for="email">Work email</label>
+      <input id="email" type="email" name="email" value="marisol@gowanuskettle.example" autocomplete="email" required>
+      <button class="btn primary full" type="submit">Continue <span class="arrow">→</span></button>
+    </form>
+    <p class="auth-note">Demo account: Marisol Vance · Gowanus Kettle Brewing Co. LLC</p>
+    <a class="back-link" href="{{ url_for('flow.landing') }}">← Back to home</a>
+  </div>
+</section>
+{% endblock %}

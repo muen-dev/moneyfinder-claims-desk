@@ -96,3 +96,32 @@ PRISMTRACE_PROJECT_ID=
 PRISMTRACE_HOST=https://api.prism.blockconvey.com
 ELEVENLABS_API_KEY=         # optional
 ```
+
+---
+
+## Auth & onboarding flow (Epic 03)
+
+Demo auth is session-based; no password/OAuth. Guarded pages redirect to `/signin`.
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/` | public landing |
+| GET/POST | `/signin` | demo email sign-in; sets `session["user"]` |
+| GET | `/signout` | clears session |
+| GET | `/onboarding` | routes to current phase |
+| GET/POST | `/onboarding/connect` | consent + start phase 1 |
+| GET | `/onboarding/profile-loading` | spinner shell (calls profile API) |
+| GET/POST | `/onboarding/profile` | editable profile; required fields gate |
+| GET | `/onboarding/searching` | spinner shell (calls benefits API) |
+| GET | `/onboarding/benefits` | benefit cards |
+| GET | `/onboarding/benefits/<id>` | form preview + approval |
+| POST | `/onboarding/benefits/<id>/submit` | mock submit; creates/updates application |
+| GET | `/onboarding/progress/<app_id>` | progress card |
+| GET | `/api/onboarding/profile` | `{fields, missing_required, stats}` |
+| GET | `/api/onboarding/benefits` | `{benefits}`; marks phase 2 ready |
+| POST | `/api/onboarding/benefits/<id>/fill` | `{benefit, fields}` |
+| POST | `/api/onboarding/benefits/<id>/submit` | `{approved:true}` required |
+
+**State:** `store.onboarding` — `gmail_connected`, `profile_saved`, `benefits_ready`, `selected_benefit`, `application_id`, `fields`. Reset with `/api/demo/reset`.
+
+**Rules:** required fields (legal name, EIN, address, owner, phone, authorized signer) block Continue; missing fields are coral; approval checkbox is required before submit; submit is mock-only.

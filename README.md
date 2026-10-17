@@ -12,7 +12,9 @@
 
 | Screen | What it shows | Data source |
 |---|---|---|
-| `/onboarding` | Gmail scan → sourced facts → 3 conflicts → consent | synthetic inbox (25 messages) |
+| `/` | Landing page + public nav | static |
+| `/signin` | Demo auth (email only), session, guarded routes | demo user |
+| `/onboarding` | 3 phases: Gmail consent → profile review → benefit cards → form approval → progress | onboarding fixture + inbox |
 | `/dashboard` | Four-column claims desk: Found / In process / Approved / Paid; totals; next actions | applications fixture |
 | `/applications/<id>` | Amount, evidence, event log, allowed status transitions | fixture + status machine |
 | `/eligibility` | 7 programs with verdicts, citations, `as_of`; WOTC flagged expired | cached official-page excerpts |
@@ -31,9 +33,14 @@ Everything is backed by **fixtures**, so the demo works with no network, no mode
 
 ## Screenshots
 
+![Landing](docs/proofs/flow-landing-hero.png)
+![Benefit cards](docs/proofs/flow-benefits.png)
+![Form review and approval](docs/proofs/flow-form.png)
+![Progress card](docs/proofs/flow-progress.png)
 ![Claims Desk](docs/proofs/dashboard.png)
-![Books and accountant packet](docs/proofs/books.png)
 ![PRISM session — 12 steps, flagged](docs/proofs/prism-sessions.png)
+
+Design system + component specs: [docs/DESIGN.md](docs/DESIGN.md) · User-flow epic: [docs/EPIC_UI_FLOW.md](docs/EPIC_UI_FLOW.md).
 
 ## Quickstart
 

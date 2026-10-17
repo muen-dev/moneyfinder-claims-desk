@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}MoneyFinder — government money for small business{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="public">
+  <div class="banner" role="status">Synthetic demo — not tax advice. Estimates are not money received.</div>
+  <header class="public-nav">
+    <a class="wordmark" href="{{ url_for('flow.landing') }}">
+      <span class="wordmark-glyph">M</span> MoneyFinder
+    </a>
+    <nav class="public-links">
+      <a href="{{ url_for('flow.landing') }}#how">How it works</a>
+      <a href="{{ url_for('flow.landing') }}#benefits">Benefits</a>
+      <a href="{{ url_for('flow.landing') }}#accountants">For accountants</a>
+    </nav>
+    {% if user %}
+      <a class="btn primary small" href="{{ url_for('flow.onboarding') }}">Continue setup</a>
+    {% else %}
+      <a class="btn primary small" href="{{ url_for('flow.signin') }}">Sign in</a>
+    {% endif %}
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <footer class="site-footer">
+    <span>MoneyFinder · synthetic demo · Gowanus Kettle Brewing Co. LLC (fictional)</span>
+    <span>Read-only inbox · no filing without approval · not tax or legal advice</span>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

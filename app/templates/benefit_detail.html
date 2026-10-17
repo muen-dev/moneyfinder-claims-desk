@@ -1,0 +1,75 @@
+{% extends "base_wizard.html" %}
+{% block title %}{{ benefit.form }} · MoneyFinder{% endblock %}
+{% block content %}
+<section class="wizard">
+  <div class="wizard-head">
+    <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <div class="wizard-steps">
+      <span class="wstep done"><i>1</i>Inbox</span>
+      <span class="wstep done"><i>2</i>Benefits</span>
+      <span class="wstep active"><i>3</i>Form &amp; send</span>
+    </div>
+    <span class="wizard-user">{{ current_user.email }}</span>
+  </div>
+
+  <div class="wizard-panel wide">
+    <p class="eyebrow">Step 3 of 3 · form &amp; approval</p>
+    <div class="panel-title-row">
+      <div>
+        <h1>{{ benefit.name }}</h1>
+        <p class="lede">{{ benefit.agency }} · Form {{ benefit.form }} · filled from your profile</p>
+      </div>
+      <span class="fit-badge">{{ benefit.fit_score }} fit</span>
+    </div>
+
+    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+
+    <div class="form-layout">
+      <div class="paper-form">
+        <div class="paper-header">
+          <div>
+            <span class="paper-agency">{{ benefit.agency }}</span>
+            <strong>{{ benefit.form }} — {{ benefit.name }}</strong>
+          </div>
+          <span class="mock-chip">Official PDF · cached</span>
+        </div>
+        <div class="paper-body">
+          {% for f in benefit.form_fields %}
+          <div class="paper-row {{ 'is-missing' if f.missing else '' }}">
+            <div class="paper-label">{{ f.label }}</div>
+            <div class="paper-value">
+              {% if f.value %}{{ f.value }}{% else %}<span class="missing-value">Needs your input</span>{% endif %}
+              <div class="paper-meta">
+                <span class="source-chip">{{ f.source }}</span>
+                {% if f.confidence %}<span class="conf">{{ "%.0f"|format(f.confidence*100) }}%</span>{% endif %}
+                {% if f.missing %}<span class="needs">{{ f.note or "needs you" }}</span>{% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="paper-foot">Synthetic preview · the official PDF is fetched from the agency and filled field by field</div>
+      </div>
+
+      <aside class="approval-card">
+        <p class="eyebrow">Your approval</p>
+        <h3>{{ benefit.form }} · {{ benefit.amount_estimate_cents|money }}</h3>
+        <p class="approval-copy">The agent will submit this filled form to {{ benefit.agency }} as a <strong>mock submission</strong>. Nothing is sent without this approval.</p>
+        <ul class="approval-list">
+          <li><span>Fields filled</span><b>{{ benefit.form_fields|length }}</b></li>
+          <li><span>Missing fields</span><b>{{ benefit.form_fields|selectattr("missing")|list|length }}</b></li>
+          <li><span>Source</span><b>Profile + email</b></li>
+          <li><span>Destination</span><b>{{ benefit.agency }}</b></li>
+        </ul>
+        <form method="post" action="{{ url_for('flow.benefit_submit', benefit_id=benefit.id) }}">
+          <label class="check-row"><input type="checkbox" name="approve"> I reviewed the form and approve this submission.</label>
+          <button class="btn primary full" type="submit">Approve &amp; send <span class="arrow">→</span></button>
+        </form>
+        <p class="fine-print">Mock submission only. Not tax advice. The agency is never contacted.</p>
+        <a class="back-link" href="{{ url_for('flow.benefits') }}">← Back to benefits</a>
+      </aside>
+    </div>
+  </div>
+  <p class="wizard-foot">Every filled field carries its source · missing fields are flagged, never guessed</p>
+</section>
+{% endblock %}

@@ -4,22 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}MoneyFinder Claims Desk{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 </head>
 <body>
+  <div class="banner" role="status">{{ banner }} · <a href="{{ url_for('flow.landing') }}">Demo home</a></div>
   <header class="topbar">
-    <a class="brand" href="{{ url_for('pages.dashboard') }}">
-      <span class="mark">MT</span>
-      <span class="brand-text">MoneyFinder <em>Claims Desk</em></span>
+    <a class="wordmark" href="{{ url_for('pages.dashboard') }}">
+      <span class="wordmark-glyph">M</span> MoneyFinder <em>Claims Desk</em>
     </a>
     <nav class="nav">
       {% for href, label in nav %}
         <a href="{{ href }}" class="{{ 'active' if request.path == href else '' }}">{{ label }}</a>
       {% endfor %}
     </nav>
+    <div class="top-actions">
+      {% if current_user %}
+        <span class="user-chip">{{ current_user.name or current_user.email }}</span>
+        <a class="btn ghost small" href="{{ url_for('flow.signout') }}">Sign out</a>
+      {% else %}
+        <a class="btn primary small" href="{{ url_for('flow.signin') }}">Sign in</a>
+      {% endif %}
+    </div>
   </header>
-
-  <div class="banner" role="status">{{ banner }}</div>
 
   <main class="wrap">
     {% with messages = get_flashed_messages() %}
@@ -34,5 +43,6 @@
     <span>Synthetic demo · Gowanus Kettle Brewing Co. LLC (fictional)</span>
     <span>Not tax or legal advice · No filing, no payment movement</span>
   </footer>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

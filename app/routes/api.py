@@ -4,6 +4,7 @@ from __future__ import annotations
 from flask import Blueprint, current_app, jsonify, request, send_file
 
 from ..services import applications, eligibility, evidence, ledger, packet
+from ..services.prism import Prism
 from ..services.nicrron import Nicrron
 from ..services.orchestrator import start_run
 from ..services.prism import Prism
@@ -168,3 +169,58 @@ def voice_summary():
         "The next action is to review the exception queue."
     )
     return ok(text=text, totals=t)
+
+
+# ---- onboarding (3-phase flow) -------------------------------------
+
+def _emit(step: str, tool: str, summary: str = "") -> None:
+    from flask import session
+    run_id = session.get("onboarding_run_id")
+    if run_id and not current_app.config.get("TESTING"):
+        Prism().emit(session_id=run_id, step=step, tool=tool, status="ok",
+                     input_summary=f"onboarding · {step}", output_summary=summary or step)
+
+
+@bp.get("/onboarding/profile")
+def onboarding_profile():
+    s = store()
+    return ok(fields=s.onboarding_fields(), missing_required=s.missing_required(),
+              stats={"messages": len(s.profile.get("messages", [])), "facts": len(s.profile.get("facts", [])),
+                     "conflicts": len(s.profile.get("conflicts", [])), "purchases": len(s.ledger.get("transactions", []))})
+
+
+@bp.get("/onboarding/benefits")
+def onboarding_benefits():
+    s = store()
+    s.mark_benefits_ready()
+    _emit("benefit_search", "search_programs", f"{len(s.benefits())} programs with citations")
+    _emit("benefit_match", "score_match", "fit scores computed from profile signals")
+    return ok(benefits=s.benefits())
+
+
+@bp.post("/onboarding/benefits/<benefit_id>/fill")
+def onboarding_fill(benefit_id: str):
+    s = store()
+    benefit = s.benefit(benefit_id)
+    if benefit is None:
+        return jsonify({"error": {"code": "not_found", "message": "benefit not found"}}), 404
+    s.select_benefit(benefit_id)
+    _emit("pdf_fetch", "fetch_pdf_form", f"{benefit['form']} from {benefit['agency']}")
+    _emit("form_fill", "fill_form", f"{len(benefit['form_fields'])} fields")
+    return ok(benefit=benefit, fields=benefit["form_fields"])
+
+
+@bp.post("/onboarding/benefits/<benefit_id>/submit")
+def onboarding_submit(benefit_id: str):
+    s = store()
+    payload = request.get_json(silent=True) or {}
+    if not payload.get("approved"):
+        return jsonify({"error": {"code": "approval_required", "message": "approve the filled form first"}}), 400
+    try:
+        app = s.submit_benefit(benefit_id, actor="user")
+    except KeyError as exc:
+        return jsonify({"error": {"code": "not_found", "message": str(exc)}}), 404
+    _emit("user_approval", "request_approval", "user approved")
+    _emit("submit", "mock_submit", app.get("confirmation_id", ""))
+    _emit("status_check", "poll_status", "submitted")
+    return ok(application=app)

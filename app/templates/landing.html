@@ -1,0 +1,104 @@
+{% extends "base_public.html" %}
+{% block title %}MoneyFinder — find the government money your business is owed{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-blob blob-lavender"></div>
+  <div class="hero-blob blob-peach"></div>
+  <div class="hero-blob blob-mint"></div>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow">Government money for small business</p>
+      <h1 class="display">You already<br>qualify. MoneyFinder<br>files it.</h1>
+      <p class="lede">Learn what your business is owed from your own inbox, let the agent fill the official forms, approve every send, and track each application until the deposit clears.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="{{ url_for('flow.signin') }}">Find my benefits <span class="arrow">→</span></a>
+        <a class="btn ghost" href="#how">See how it works</a>
+      </div>
+      <p class="trust-line">Read-only inbox · synthetic mailbox · nothing is filed without your approval</p>
+    </div>
+    <div class="hero-visual">
+      <div class="mock-panel">
+        <div class="mock-head"><span class="mock-dot"></span><strong>Claims Desk</strong><span class="mock-chip">Demo</span></div>
+        <div class="mock-stats">
+          <div><span>Identified</span><strong>$45,737</strong></div>
+          <div><span>In process</span><strong>$15,075</strong></div>
+          <div><span>Paid</span><strong>$0</strong></div>
+        </div>
+        <div class="mock-rows">
+          <div class="mock-row"><span class="form">IT-636</span><span>Production credit</span><b>$13,471</b><em class="mini found">Found</em></div>
+          <div class="mock-row"><span class="form">IT-643</span><span>Hire a veteran</span><b>$15,075</b><em class="mini in_process">In process</em></div>
+          <div class="mock-row"><span class="form">IT-212</span><span>Investment credit</span><b>$7,460</b><em class="mini approved">Approved</em></div>
+          <div class="mock-row"><span class="form">8846</span><span>FICA tips</span><b>$9,731</b><em class="mini found">Form ready</em></div>
+        </div>
+      </div>
+      <div class="mock-note">Every card is backed by an email, an official form, and a status you can audit.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="section-inner">
+    <p class="eyebrow">How it works</p>
+    <h2 class="section-title">Three steps. One agent. You approve the money moments.</h2>
+    <div class="feature-grid">
+      <article class="feature-card tint-lavender">
+        <span class="feature-num">01</span>
+        <h3>Connect your inbox</h3>
+        <p>Read-only, synthetic mailbox. The agent finds payroll, hires, equipment and receipts, and builds a profile you can edit.</p>
+      </article>
+      <article class="feature-card tint-peach">
+        <span class="feature-num">02</span>
+        <h3>See what you qualify for</h3>
+        <p>Public-agency programs, matched to your facts with a plain-language “why this fits you” and a citation, never a guess.</p>
+      </article>
+      <article class="feature-card tint-mint">
+        <span class="feature-num">03</span>
+        <h3>Approve, send, track</h3>
+        <p>The agent pulls the official PDF, fills every field with provenance, and waits for your approval before anything is sent.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="dark-band" id="benefits">
+  <div class="section-inner dark-inner">
+    <p class="eyebrow light">The money rule</p>
+    <h2 class="dark-title">Identified is not approved.<br>Approved is not paid.</h2>
+    <p class="dark-copy">A match is an estimate. An approval is agency evidence. Paid means a deposit matched to the application. MoneyFinder never blurs the three — and never calls a form “filed” until you approve it.</p>
+    <div class="dark-stats">
+      <div><strong>4</strong><span>programs matched with citations</span></div>
+      <div><strong>12</strong><span>fields filled per form, sourced</span></div>
+      <div><strong>1</strong><span>human approval before send</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="accountants">
+  <div class="section-inner split-feature">
+    <div>
+      <p class="eyebrow">For the accountant</p>
+      <h2 class="section-title">The inbox becomes a review-ready file.</h2>
+      <p class="body-copy">Every transaction is evidence. Missing receipts and duplicate charges are flagged, never silently corrected. The accountant packet includes the ledger, the evidence index, and the open questions — prepared for review, not filed.</p>
+      <a class="btn ghost" href="{{ url_for('flow.signin') }}">Preview the demo desk <span class="arrow">→</span></a>
+    </div>
+    <div class="paper-card">
+      <div class="paper-head"><span>Accountant packet · 2025</span><span class="mock-chip">Demo</span></div>
+      <ul class="paper-list">
+        <li><span>Summary.xlsx</span><b>Ready</b></li>
+        <li><span>Ledger.csv</span><b>39 rows</b></li>
+        <li><span>Evidence index</span><b>Source-linked</b></li>
+        <li><span>Open questions</span><b>5</b></li>
+      </ul>
+      <p class="paper-note">“Prepared for professional review. Not filed. Not tax advice.”</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="cta-inner">
+    <h2>Your business is already owed money.<br>Go get it.</h2>
+    <a class="btn primary" href="{{ url_for('flow.signin') }}">Find my benefits <span class="arrow">→</span></a>
+    <p class="trust-line">Synthetic demo · no real Gmail · no real filing</p>
+  </div>
+</section>
+{% endblock %}

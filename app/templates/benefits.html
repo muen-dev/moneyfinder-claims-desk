@@ -1,0 +1,53 @@
+{% extends "base_wizard.html" %}
+{% block title %}Benefits · MoneyFinder{% endblock %}
+{% block content %}
+<section class="wizard">
+  <div class="wizard-head">
+    <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <div class="wizard-steps">
+      <span class="wstep done"><i>1</i>Inbox</span>
+      <span class="wstep active"><i>2</i>Benefits</span>
+      <span class="wstep"><i>3</i>Form &amp; send</span>
+    </div>
+    <span class="wizard-user">{{ current_user.email }}</span>
+  </div>
+
+  <div class="wizard-panel wide">
+    <p class="eyebrow">Step 2 of 3 · benefit search</p>
+    <div class="panel-title-row">
+      <div>
+        <h1>You may qualify for {{ benefits|length }} programs.</h1>
+        <p class="lede">Each card is a lead for review, not a filing decision. Open one to see the official form filled from your profile.</p>
+      </div>
+      <span class="count-pill">{{ benefits|length }} matches</span>
+    </div>
+
+    <div class="benefit-grid">
+      {% for b in benefits %}
+      <article class="benefit-card">
+        <div class="benefit-top">
+          <span class="fit-score">{{ b.fit_score }}<small>fit</small></span>
+          <span class="mock-chip">{{ b.form or "Program" }}</span>
+        </div>
+        <h3>{{ b.name }}</h3>
+        <p class="benefit-agency">{{ b.agency }}</p>
+        <p class="benefit-desc">{{ b.description }}</p>
+        <div class="why-fit">
+          <span>Why this fits you</span>
+          <p>{{ b.why_fit }}</p>
+        </div>
+        <div class="benefit-meta">
+          <div><span>Estimated credit</span><strong>{{ b.amount_estimate_cents|money }}</strong></div>
+          <div><span>Deadline</span><strong>{{ b.deadline }}</strong></div>
+        </div>
+        <div class="benefit-actions">
+          <a class="btn primary small" href="{{ url_for('flow.benefit_detail', benefit_id=b.id) }}">Fill this form <span class="arrow">→</span></a>
+          <a class="source-link" href="{{ b.source_url }}" target="_blank" rel="noopener">Official page ↗</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+  <p class="wizard-foot">Programs are synthetic or cached official pages · estimates are not money received</p>
+</section>
+{% endblock %}

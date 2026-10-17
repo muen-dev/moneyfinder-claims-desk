@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from flask import Flask
 
+from .auth import current_user
 from .config import Config
 from .store import Store
 from .util import money as _money
@@ -16,9 +17,11 @@ def create_app() -> Flask:
     store.load()
     app.extensions["store"] = store
 
-    from .routes.pages import bp as pages_bp
     from .routes.api import bp as api_bp
+    from .routes.flow import bp as flow_bp
+    from .routes.pages import bp as pages_bp
 
+    app.register_blueprint(flow_bp)
     app.register_blueprint(pages_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
 
@@ -33,6 +36,7 @@ def create_app() -> Flask:
     def inject_globals():
         return {
             "banner": "Synthetic demo — not tax advice. Estimates are not money received.",
+            "current_user": current_user(),
             "nav": [
                 ("/dashboard", "Claims Desk"),
                 ("/onboarding", "Onboarding"),

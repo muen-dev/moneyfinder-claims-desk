@@ -1,0 +1,33 @@
+{% extends "base_wizard.html" %}
+{% block title %}Connect inbox · MoneyFinder{% endblock %}
+{% block content %}
+<section class="wizard">
+  <div class="wizard-head">
+    <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <div class="wizard-steps">
+      <span class="wstep active"><i>1</i>Inbox</span>
+      <span class="wstep"><i>2</i>Benefits</span>
+      <span class="wstep"><i>3</i>Form &amp; send</span>
+    </div>
+    <span class="wizard-user">{{ current_user.email }}</span>
+  </div>
+
+  <div class="wizard-panel narrow">
+    <p class="eyebrow">Step 1 of 3</p>
+    <h1>Let the agent read your inbox.</h1>
+    <p class="lede">We use a synthetic mailbox for this demo. The agent reads payroll, hiring, equipment and receipts to build your business profile. It never writes, sends or deletes email.</p>
+
+    <div class="scope-list">
+      <div class="scope-row"><span class="scope-dot"></span><div><strong>Read-only access</strong><p>Scan sender, subject, dates, amounts and attachment availability.</p></div></div>
+      <div class="scope-row"><span class="scope-dot"></span><div><strong>Build a profile, not a copy</strong><p>Facts are stored with the email that proves them. You can edit every field.</p></div></div>
+      <div class="scope-row"><span class="scope-dot"></span><div><strong>Revocable and synthetic</strong><p>This demo never touches a real Gmail account. Reset clears the demo data.</p></div></div>
+    </div>
+
+    <form method="post" action="{{ url_for('flow.connect_submit') }}">
+      <button class="btn primary" type="submit">Authorize synthetic inbox <span class="arrow">→</span></button>
+    </form>
+    <a class="back-link" href="{{ url_for('flow.landing') }}">Not now, back to home</a>
+  </div>
+  <p class="wizard-foot">Synthetic demo · read-only · no real account, no real filing</p>
+</section>
+{% endblock %}

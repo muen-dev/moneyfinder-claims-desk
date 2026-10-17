@@ -1,0 +1,446 @@
+{
+  "profile_fields": [
+    {
+      "key": "legal_name",
+      "label": "Legal business name",
+      "value": "Gowanus Kettle Brewing Co. LLC",
+      "required": true,
+      "source": "Gusto payroll email",
+      "confidence": 0.99
+    },
+    {
+      "key": "entity_type",
+      "label": "Entity type",
+      "value": "Domestic LLC (New York)",
+      "required": true,
+      "source": "NY registry",
+      "confidence": 0.97
+    },
+    {
+      "key": "ein",
+      "label": "EIN",
+      "value": "00-4271985",
+      "required": true,
+      "source": "Registry (synthetic)",
+      "confidence": 0.99
+    },
+    {
+      "key": "address",
+      "label": "Business address",
+      "value": "417 Sackett Street, Brooklyn, NY 11231",
+      "required": true,
+      "source": "NYS DTF email",
+      "confidence": 0.98
+    },
+    {
+      "key": "owner_name",
+      "label": "Owner / authorized representative",
+      "value": "Marisol Vance",
+      "required": true,
+      "source": "Business profile",
+      "confidence": 0.95
+    },
+    {
+      "key": "phone",
+      "label": "Business phone",
+      "value": "",
+      "required": true,
+      "source": "Missing \u2014 please add",
+      "confidence": 0.0
+    },
+    {
+      "key": "authorized_rep",
+      "label": "Authorized signer (name + role)",
+      "value": "",
+      "required": true,
+      "source": "Missing \u2014 please add",
+      "confidence": 0.0
+    },
+    {
+      "key": "tax_year",
+      "label": "Tax year",
+      "value": "2025",
+      "required": false,
+      "source": "Payroll records",
+      "confidence": 0.99
+    },
+    {
+      "key": "naics",
+      "label": "Industry (NAICS)",
+      "value": "312120 \u2014 Breweries",
+      "required": false,
+      "source": "Company research",
+      "confidence": 0.92
+    },
+    {
+      "key": "headcount",
+      "label": "Employees (year end)",
+      "value": "14",
+      "required": false,
+      "source": "Gusto payroll",
+      "confidence": 0.95
+    },
+    {
+      "key": "payroll_provider",
+      "label": "Payroll provider",
+      "value": "Gusto",
+      "required": false,
+      "source": "Gusto emails",
+      "confidence": 0.99
+    },
+    {
+      "key": "accountant",
+      "label": "Accountant",
+      "value": "Owen Halloran CPA",
+      "required": false,
+      "source": "Email thread",
+      "confidence": 0.97
+    }
+  ],
+  "benefits": [
+    {
+      "id": "ben_it636",
+      "program_id": "nys_beer_production",
+      "name": "Alcoholic Beverage Production Credit",
+      "form": "IT-636",
+      "agency": "NYS Department of Taxation and Finance",
+      "jurisdiction": "NY",
+      "description": "A New York credit for breweries based on barrels of beer produced in the state during the tax year.",
+      "why_fit": "You brewed 3,104 barrels in New York in 2025 and hold a NY microbrewer license \u2014 the two facts this credit is built around.",
+      "fit_score": 96,
+      "amount_estimate_cents": 1347100,
+      "deadline": "2026-04-15",
+      "source_url": "https://www.tax.ny.gov/pdf/current_forms/it/it636_fill_in.pdf",
+      "form_url": "https://www.tax.ny.gov/pdf/current_forms/it/it636_fill_in.pdf",
+      "form_fields": [
+        {
+          "label": "Legal name",
+          "value": "Gowanus Kettle Brewing Co. LLC",
+          "source": "Profile",
+          "confidence": 0.99,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "EIN",
+          "value": "00-4271985",
+          "source": "Profile",
+          "confidence": 0.99,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Business address",
+          "value": "417 Sackett Street, Brooklyn, NY 11231",
+          "source": "Profile",
+          "confidence": 0.98,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Tax year",
+          "value": "2025",
+          "source": "Profile",
+          "confidence": 0.99,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "NY barrels brewed",
+          "value": "3,104",
+          "source": "Email \u00b7 NYS DTF",
+          "confidence": 0.98,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Credit rate",
+          "value": "$0.14 per gallon",
+          "source": "Official form",
+          "confidence": 0.9,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Credit amount",
+          "value": "$13,471",
+          "source": "Computed",
+          "confidence": 0.95,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Signature",
+          "value": "",
+          "source": "Needs you",
+          "confidence": 0.0,
+          "missing": true,
+          "note": "You will sign on approval"
+        }
+      ],
+      "progress_steps": [
+        "Official IT-636 form fetched from NYS Department of Taxation and Finance",
+        "7 fields filled from your profile and evidence",
+        "You reviewed and approved the package",
+        "Submitted to NYS Department of Taxation and Finance (mock submission)",
+        "Agency review \u2014 check back in 5\u201310 business days"
+      ]
+    },
+    {
+      "id": "ben_it643",
+      "program_id": "nys_hire_a_veteran",
+      "name": "Hire a Veteran Credit",
+      "form": "IT-643",
+      "agency": "NYS Department of Taxation and Finance",
+      "jurisdiction": "NY",
+      "description": "A New York credit for employers who hire qualified veterans, based on first-year wages.",
+      "why_fit": "You hired two veterans in 2025 \u2014 Darnell Reyes (Cellar Operator) and Keisha Monroe (Packaging Technician).",
+      "fit_score": 94,
+      "amount_estimate_cents": 1507500,
+      "deadline": "2026-04-15",
+      "source_url": "https://www.tax.ny.gov/pdf/current_forms/it/it643_fill_in.pdf",
+      "form_url": "https://www.tax.ny.gov/pdf/current_forms/it/it643_fill_in.pdf",
+      "form_fields": [
+        {
+          "label": "Legal name",
+          "value": "Gowanus Kettle Brewing Co. LLC",
+          "source": "Profile",
+          "confidence": 0.99,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "EIN",
+          "value": "00-4271985",
+          "source": "Profile",
+          "confidence": 0.99,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Qualified veteran 1",
+          "value": "Darnell Reyes",
+          "source": "Indeed \u00b7 DD-214",
+          "confidence": 0.9,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Hire date 1",
+          "value": "May 27, 2025",
+          "source": "Gusto",
+          "confidence": 0.95,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Qualified veteran 2",
+          "value": "Keisha Monroe",
+          "source": "Indeed",
+          "confidence": 0.9,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Hire date 2",
+          "value": "August 11, 2025",
+          "source": "Gusto",
+          "confidence": 0.95,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "First-year wages",
+          "value": "",
+          "source": "Needs you",
+          "confidence": 0.0,
+          "missing": true,
+          "note": "Pull from payroll or enter manually"
+        },
+        {
+          "label": "DD-214 attachment",
+          "value": "",
+          "source": "Missing",
+          "confidence": 0.0,
+          "missing": true,
+          "note": "Collect before filing"
+        }
+      ],
+      "progress_steps": [
+        "Official IT-643 form fetched from NYS Department of Taxation and Finance",
+        "6 fields filled from your profile and evidence",
+        "You reviewed and approved the package",
+        "Submitted to NYS Department of Taxation and Finance (mock submission)",
+        "Agency review \u2014 check back in 5\u201310 business days"
+      ]
+    },
+    {
+      "id": "ben_it212",
+      "program_id": "nys_investment",
+      "name": "Investment Credit",
+      "form": "IT-212",
+      "agency": "NYS Department of Taxation and Finance",
+      "jurisdiction": "NY",
+      "description": "A New York credit for qualified tangible property placed in service during the tax year.",
+      "why_fit": "Your $186,500 canning line was placed in service on July 28, 2025 \u2014 a qualified capital investment.",
+      "fit_score": 91,
+      "amount_estimate_cents": 746000,
+      "deadline": "2026-04-15",
+      "source_url": "https://www.tax.ny.gov/pdf/current_forms/it/it212_fill_in.pdf",
+      "form_url": "https://www.tax.ny.gov/pdf/current_forms/it/it212_fill_in.pdf",
+      "form_fields": [
+        {
+          "label": "Legal name",
+          "value": "Gowanus Kettle Brewing Co. LLC",
+          "source": "Profile",
+          "confidence": 0.99,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "EIN",
+          "value": "00-4271985",
+          "source": "Profile",
+          "confidence": 0.99,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Asset",
+          "value": "24-head canning line with depalletizer and seamer",
+          "source": "Chase email",
+          "confidence": 0.96,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Placed in service",
+          "value": "July 28, 2025",
+          "source": "Owner email",
+          "confidence": 0.97,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Qualified cost",
+          "value": "$186,500",
+          "source": "Chase financing",
+          "confidence": 0.98,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Credit rate",
+          "value": "4%",
+          "source": "Official form",
+          "confidence": 0.9,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Credit amount",
+          "value": "$7,460",
+          "source": "Computed",
+          "confidence": 0.95,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Signature",
+          "value": "",
+          "source": "Needs you",
+          "confidence": 0.0,
+          "missing": true,
+          "note": "You will sign on approval"
+        }
+      ],
+      "progress_steps": [
+        "Official IT-212 form fetched from NYS Department of Taxation and Finance",
+        "7 fields filled from your profile and evidence",
+        "You reviewed and approved the package",
+        "Submitted to NYS Department of Taxation and Finance (mock submission)",
+        "Agency review \u2014 check back in 5\u201310 business days"
+      ]
+    },
+    {
+      "id": "ben_8846",
+      "program_id": "fed_fica_tip",
+      "name": "FICA Tip Credit",
+      "form": "8846",
+      "agency": "Internal Revenue Service",
+      "jurisdiction": "federal",
+      "description": "A federal credit for employer Social Security and Medicare taxes paid on certain employee tips.",
+      "why_fit": "Your taproom reported $148,600 in tips through payroll in 2025, with employer FICA paid.",
+      "fit_score": 89,
+      "amount_estimate_cents": 973100,
+      "deadline": "2026-04-15",
+      "source_url": "https://www.irs.gov/forms-pubs/about-form-8846",
+      "form_url": "https://www.irs.gov/forms-pubs/about-form-8846",
+      "form_fields": [
+        {
+          "label": "Legal name",
+          "value": "Gowanus Kettle Brewing Co. LLC",
+          "source": "Profile",
+          "confidence": 0.99,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "EIN",
+          "value": "00-4271985",
+          "source": "Profile",
+          "confidence": 0.99,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Total tips reported",
+          "value": "$148,600",
+          "source": "Payroll",
+          "confidence": 0.92,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Creditable tips",
+          "value": "$127,200",
+          "source": "Computed",
+          "confidence": 0.9,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "FICA rate",
+          "value": "7.65%",
+          "source": "Official form",
+          "confidence": 0.95,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Credit amount",
+          "value": "$9,731",
+          "source": "Computed",
+          "confidence": 0.95,
+          "missing": false,
+          "note": ""
+        },
+        {
+          "label": "Signature",
+          "value": "",
+          "source": "Needs you",
+          "confidence": 0.0,
+          "missing": true,
+          "note": "You will sign on approval"
+        }
+      ],
+      "progress_steps": [
+        "Official 8846 form fetched from Internal Revenue Service",
+        "6 fields filled from your profile and evidence",
+        "You reviewed and approved the package",
+        "Submitted to Internal Revenue Service (mock submission)",
+        "Agency review \u2014 check back in 5\u201310 business days"
+      ]
+    }
+  ]
+}

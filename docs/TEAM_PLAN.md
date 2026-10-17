@@ -30,6 +30,12 @@ The scaffold is functional against fixtures. Until the contract changes:
 | 16:15–17:00 | Submission visuals | Upload + submit | Repo/README check |
 | 17:00–18:00 | Pitch PRISM segment | Rehearse | Buffer |
 
+## UI flow (Epic 03)
+
+- **Thuy:** landing, design tokens (`docs/DESIGN.md`), consent + profile screens, visual QA.
+- **Kenan:** auth screens, benefit cards, form/approval, progress, dashboard integration.
+- **Richard:** `store.onboarding` state, `/api/onboarding/*`, PRISM onboarding traces, tests.
+
 ## Demo path
 
 `/dashboard` → `/onboarding` (scan + conflicts) → `/eligibility` (expired WOTC) → `/applications/app_it643` (transition) → `/books` (packet) → `/run-history` (12 steps, telemetry) → `/settings` (integrations).
