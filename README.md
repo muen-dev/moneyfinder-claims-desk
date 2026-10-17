@@ -22,6 +22,12 @@
 
 Everything is backed by **fixtures**, so the demo works with no network, no model key and no PRISM key. With keys, the same run emits real **Nicrron** calls and **PRISM** traces.
 
+## Screenshots
+
+![Claims Desk](docs/proofs/dashboard.png)
+![Books and accountant packet](docs/proofs/books.png)
+![PRISM session — 12 steps, flagged](docs/proofs/prism-sessions.png)
+
 ## Quickstart
 
 ```bash
