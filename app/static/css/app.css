@@ -708,3 +708,48 @@ select:focus, input:focus { outline: 2px solid var(--ink); outline-offset: 1px; 
 .doc-lightbox-close { position: absolute; top: 10px; right: 12px; z-index: 2; background: rgba(255,255,255,.9); border-radius: 50%; width: 32px; height: 32px; }
 @media (max-width: 900px) { .docs-gallery { grid-template-columns: repeat(2, 1fr); } .doc-lightbox-card { grid-template-columns: 1fr; max-height: 92vh; } .doc-lightbox-preview { max-height: 55vh; } }
 @media (max-width: 560px) { .docs-gallery { grid-template-columns: 1fr; } }
+
+/* ---------- TurboTax-inspired split sign-in ---------- */
+.auth-split { display: grid; grid-template-columns: 1.12fr .88fr; min-height: calc(100vh - 57px); background: var(--cream); }
+.auth-visual { position: relative; overflow: hidden; min-height: 680px; background: #1a1714; }
+.auth-visual > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.auth-visual-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(14,27,44,.78) 0%, rgba(14,27,44,.36) 55%, rgba(14,27,44,.08) 100%), linear-gradient(0deg, rgba(14,27,44,.72) 0%, transparent 55%); }
+.auth-visual-copy { position: absolute; z-index: 1; left: 52px; right: 40px; top: 48px; max-width: 560px; color: #fff; }
+.auth-visual-copy h2 { color: #fff; text-shadow: 0 2px 30px rgba(0,0,0,.35); font-size: clamp(38px, 4vw, 58px); line-height: .98; letter-spacing: -2.4px; margin: 10px 0 18px; }
+.auth-visual-copy p { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,.78); max-width: 46ch; margin: 0; }
+.auth-visual-copy p strong { color: #c9f27a; }
+.refund-phone { position: absolute; z-index: 2; left: 56px; bottom: 48px; width: 254px; padding: 9px; border-radius: 34px; background: #0e1b2c; box-shadow: 0 28px 70px rgba(0,0,0,.4); transform: rotate(-2deg); }
+.refund-phone-screen { padding: 17px 15px 13px; border-radius: 26px; background: #fff; color: var(--ink); }
+.refund-phone-top { display: flex; justify-content: space-between; align-items: center; font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.refund-phone-top i { width: 22px; height: 4px; border-radius: 4px; background: var(--line); }
+.refund-check { display: inline-flex; margin-top: 14px; padding: 4px 7px; border-radius: 999px; background: var(--mint); color: var(--success); font-size: 9px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.refund-label { margin: 12px 0 0; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.refund-amount { display: block; margin: 3px 0 6px; font-size: 42px; line-height: .95; letter-spacing: -2px; font-weight: 800; color: #167a4a; }
+.refund-meta { margin: 0; font-size: 9px; line-height: 1.4; color: var(--muted); }
+.refund-bar { height: 5px; margin: 14px 0 9px; border-radius: 999px; background: #eee9df; overflow: hidden; }
+.refund-bar span { display: block; width: 78%; height: 100%; border-radius: 999px; background: #167a4a; }
+.refund-row { display: flex; justify-content: space-between; padding: 5px 0; border-top: 1px solid var(--line); font-size: 10px; }
+.refund-row span { color: var(--muted); font-weight: 600; }
+.refund-row b { font-weight: 800; }
+.refund-demo { margin: 10px 0 0; font-size: 8px; color: var(--muted); }
+.photo-credit { position: absolute; z-index: 2; right: 14px; bottom: 10px; font-size: 9px; color: rgba(255,255,255,.62); }
+.auth-panel { display: grid; place-items: center; padding: 56px 28px; background: var(--cream); }
+.auth-panel .auth-card { width: 100%; max-width: 400px; background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 38px 34px; box-shadow: 0 22px 60px rgba(37,30,20,.08); }
+.auth-panel .auth-card h1 { font-size: 38px; letter-spacing: -1.6px; }
+@media (max-width: 1000px) {
+  .auth-split { grid-template-columns: 1fr; }
+  .auth-visual { min-height: 470px; }
+  .auth-visual-copy { left: 28px; top: 28px; max-width: 420px; }
+  .auth-visual-copy h2 { font-size: 38px; }
+  .auth-visual-copy p { font-size: 13px; }
+  .refund-phone { left: 28px; bottom: 26px; width: 210px; }
+  .refund-amount { font-size: 34px; }
+  .auth-panel { padding: 36px 20px; }
+}
+@media (max-width: 560px) {
+  .auth-visual { min-height: 420px; }
+  .auth-visual-copy h2 { font-size: 33px; }
+  .refund-phone { width: 176px; left: 18px; bottom: 20px; }
+  .refund-amount { font-size: 28px; }
+  .refund-row, .refund-meta { display: none; }
+}
