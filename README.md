@@ -14,7 +14,7 @@
 |---|---|---|
 | `/` | Landing page + public nav | static |
 | `/signin` | Demo auth (email only), session, guarded routes | demo user |
-| `/onboarding` | 3 phases with explicit agent stages: Gmail consent → **Gmail crawl** → profile review → benefit cards → **form fill** (real PDF) → approval → progress | onboarding fixture + inbox + `fixtures/forms/` |
+| `/onboarding` | 3 phases with explicit agent stages: Gmail consent → **Gmail crawl** → profile review → **verification** (SLA/DOS/zoning/tax) → benefit cards → **form fill** (real PDF) → approval → progress | onboarding fixture + inbox + `fixtures/verification.json` + `fixtures/forms/` |
 | `/dashboard` | Four-column claims desk: Found / In process / Approved / Paid; totals; next actions | applications fixture |
 | `/applications/<id>` | Amount, evidence, event log, allowed status transitions | fixture + status machine |
 | `/eligibility` | 7 programs with verdicts, citations, `as_of`; WOTC flagged expired | cached official-page excerpts |
@@ -33,6 +33,16 @@ Everything is backed by **fixtures**, so the demo works with no network, no mode
 | Official PDF fill | `form-filling/demo_forms.py` (pypdf) | **Ported** → `app/services/pdf_fill.py`, blank PDFs in `fixtures/forms/` |
 | Anchor browser fill + live view | `form-filling/fill_pdf.py` | Not ported (needs `ANCHOR_API_KEY`); useful for the recording |
 | Synthetic demo business/inbox | `demo/gowanus-kettle/` | Reused as this app's fixtures |
+
+## Reset the demo
+
+The onboarding state is server-side; to restart from the Gmail consent screen:
+
+- **UI:** click **Reset demo** in the top banner on any screen (one click; clears session + fixtures), or
+- **Settings → Reset demo state** (keeps you signed in), or
+- **API:** `curl -X POST http://127.0.0.1:8000/api/demo/reset`
+
+Then go to `/signin` (or `/onboarding`) and run the flow again.
 
 ## Team access
 

@@ -26,8 +26,10 @@
                  │    → authorize → **Gmail crawl** screen:
                  │      messages read, facts, conflicts, purchases
                  │    → profile review: every field editable,
-                 │      required fields missing = coral “needs you”
-                 │    → continue (blocked until required fields are filled)
+                 │      missing fields are coral but **do not block** (time-boxed demo)
+                 │    → verification: NYS SLA license, NYS DOS standing,
+                 │      NYC zoning/BBL, tax classification, pre-screened incentives
+                 │    → continue to benefit search
                  │
                  ├─ PHASE 2 — Benefit search
                  │    → spinner: agent searches public programs

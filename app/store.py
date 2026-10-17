@@ -43,6 +43,7 @@ class Store:
                 "gmail_connected": False,
                 "gmail_scanned": False,
                 "profile_saved": False,
+                "verification_ready": False,
                 "benefits_ready": False,
                 "selected_benefit": None,
                 "filled_benefit": None,
@@ -86,7 +87,9 @@ class Store:
                     field["source"] = "You edited this"
                     field["confidence"] = 1.0
             missing = self.missing_required()
-            self.onboarding["profile_saved"] = len(missing) == 0
+            # Time-boxed demo: do not block progress on missing profile fields.
+            # The fields stay coral so the user can add them later.
+            self.onboarding["profile_saved"] = True
             self._persist()
             return missing
 
@@ -105,6 +108,10 @@ class Store:
 
     def benefit(self, benefit_id: str) -> dict | None:
         return next((b for b in self.benefits() if b.get("id") == benefit_id), None)
+
+    def mark_verified(self) -> None:
+        self.onboarding["verification_ready"] = True
+        self._persist()
 
     def mark_benefits_ready(self) -> None:
         self.onboarding["benefits_ready"] = True

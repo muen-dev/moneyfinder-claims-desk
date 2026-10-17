@@ -6,7 +6,7 @@ import time
 from flask import Blueprint, current_app, flash, redirect, render_template, request, send_file, session, url_for
 
 from ..auth import current_user, login_required
-from ..services import evidence, pdf_fill
+from ..services import evidence, pdf_fill, verification
 from ..services.prism import Prism
 from ..services.tracing import annotate
 
@@ -63,6 +63,15 @@ def signin():
     return render_template("signin.html", next=request.args.get("next", ""))
 
 
+@bp.get("/demo/reset")
+def demo_reset():
+    """Demo-only reset: clears onboarding/app state and the session, then returns to sign-in."""
+    store().reset()
+    session.clear()
+    flash("Demo reset. Sign in to start from the Gmail consent screen.")
+    return redirect(url_for("flow.signin"))
+
+
 @bp.get("/signout")
 def signout():
     session.clear()
@@ -79,6 +88,8 @@ def onboarding():
         return redirect(url_for("flow.gmail_crawl"))
     if not s.onboarding["profile_saved"]:
         return redirect(url_for("flow.profile_review"))
+    if not s.onboarding.get("verification_ready"):
+        return redirect(url_for("flow.verify"))
     if not s.onboarding["benefits_ready"]:
         return redirect(url_for("flow.searching"))
     if s.onboarding.get("application_id"):
@@ -148,11 +159,20 @@ def profile_save():
     values = {f["key"]: request.form.get(f"field_{f['key']}", "") for f in s.onboarding_fields()}
     missing = s.save_onboarding_profile(values)
     if missing:
-        return render_template("profile_review.html", step=1, fields=s.onboarding_fields(),
-                               missing=missing, error="Fill the coral fields to continue.")
+        flash(f"{len(missing)} profile field(s) left blank — the agent will flag them in verification.")
     emit("profile_build", "build_profile", "succeeded", "12 fields from inbox + evidence")
     emit("profile_review", "review_profile", "succeeded", "User confirmed the profile")
-    return redirect(url_for("flow.searching"))
+    return redirect(url_for("flow.verify"))
+
+
+@bp.get("/onboarding/verify")
+@login_required
+def verify():
+    s = store()
+    if not s.onboarding["profile_saved"]:
+        return redirect(url_for("flow.profile_review"))
+    return render_template("verification.html", step=1, verified=s.onboarding.get("verification_ready", False),
+                           verification=verification.results(s))
 
 
 @bp.get("/onboarding/searching")
@@ -161,6 +181,8 @@ def searching():
     s = store()
     if not s.onboarding["profile_saved"]:
         return redirect(url_for("flow.profile_review"))
+    if not s.onboarding.get("verification_ready"):
+        return redirect(url_for("flow.verify"))
     return render_template("searching.html", step=2)
 
 
@@ -168,6 +190,8 @@ def searching():
 @login_required
 def benefits():
     s = store()
+    if not s.onboarding.get("verification_ready"):
+        return redirect(url_for("flow.verify"))
     if not s.onboarding["benefits_ready"]:
         return redirect(url_for("flow.searching"))
     return render_template("benefits.html", step=2, benefits=s.benefits())

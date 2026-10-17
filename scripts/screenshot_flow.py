@@ -44,7 +44,12 @@ with sync_playwright() as p:
 
     page.fill("#field_phone", "(718) 555-0142")
     page.fill("#field_authorized_rep", "Marisol Vance, Managing Member")
-    page.click("button:has-text('Continue to benefit search')", no_wait_after=True)
+    page.click("button:has-text('Continue to verification')", no_wait_after=True)
+    page.wait_for_url("**/onboarding/verify", timeout=15000)
+    page.wait_for_selector("text=Verified against government records", timeout=20000)
+    page.wait_for_timeout(400)
+    shot(page, "flow-verify.png")
+    page.click("a:has-text('Continue to benefit search')", no_wait_after=True)
     page.wait_for_url("**/onboarding/benefits", timeout=20000)
     page.wait_for_timeout(300)
     shot(page, "flow-benefits.png")

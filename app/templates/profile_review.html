@@ -17,7 +17,7 @@
     <div class="panel-title-row">
       <div>
         <h1>Here is what we learned.</h1>
-        <p class="lede">Every field is editable. Coral fields are required before the agent can search for benefits.</p>
+        <p class="lede">Every field is editable. Coral fields are missing — you can add them now or continue and let the agent flag them in verification.</p>
       </div>
       <span class="count-pill">{{ fields|length }} fields</span>
     </div>
@@ -41,7 +41,7 @@
       </div>
       <div class="form-actions">
         <a class="btn ghost" href="{{ url_for('flow.onboarding') }}">Back</a>
-        <button class="btn primary" type="submit">Continue to benefit search <span class="arrow">→</span></button>
+        <button class="btn primary" type="submit">Continue to verification <span class="arrow">→</span></button>
       </div>
     </form>
   </div>

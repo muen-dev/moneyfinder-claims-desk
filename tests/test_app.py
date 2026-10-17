@@ -83,19 +83,35 @@ def test_profile_api_and_required_fields(client):
     assert missing == {"phone", "authorized_rep"}
 
 
-def test_profile_blocks_until_required_filled(client, app):
+def test_profile_allows_missing_fields_then_goes_to_verification(client, app):
     login(client)
     client.post("/onboarding/connect")
     client.get("/api/onboarding/profile")
     fields = app.extensions["store"].onboarding_fields()
     values = {f"field_{f['key']}": f["value"] for f in fields}
+    # leave phone + authorized rep blank: time-boxed demo should still proceed
     r = client.post("/onboarding/profile", data=values)
-    assert r.status_code == 200
-    assert b"Fill the coral fields" in r.data
-    values["field_phone"] = "(718) 555-0142"
-    values["field_authorized_rep"] = "Marisol Vance, Managing Member"
-    r = client.post("/onboarding/profile", data=values)
-    assert r.status_code == 302 and "/onboarding/searching" in r.headers["Location"]
+    assert r.status_code == 302 and "/onboarding/verify" in r.headers["Location"]
+    assert app.extensions["store"].onboarding["profile_saved"] is True
+
+
+def test_verification_stage(client):
+    login(client)
+    client.post("/onboarding/connect")
+    client.get("/api/onboarding/profile")
+    s = client.application.extensions["store"]
+    values = {f"field_{f['key']}": f["value"] for f in s.onboarding_fields()}
+    client.post("/onboarding/profile", data=values)
+    page = client.get("/onboarding/verify")
+    assert page.status_code == 200
+    assert b"Verifying the business" in page.data
+    data = client.post("/api/onboarding/verify").get_json()
+    assert data["verification"]["verified"] is True
+    assert len(data["verification"]["checks"]) == 4
+    assert len(data["verification"]["incentives"]) == 2
+    # reload shows results
+    page = client.get("/onboarding/verify")
+    assert b"Verified against government records" in page.data
 
 
 # ---- phase 2: benefits ---------------------------------------------
@@ -108,6 +124,7 @@ def test_benefit_cards_after_search(client):
     values["field_phone"] = "(718) 555-0142"
     values["field_authorized_rep"] = "Marisol Vance, Managing Member"
     client.post("/onboarding/profile", data=values)
+    client.post("/api/onboarding/verify")
     data = client.get("/api/onboarding/benefits").get_json()
     assert len(data["benefits"]) == 4
     r = client.get("/onboarding/benefits")
@@ -126,6 +143,7 @@ def _reach_benefits(client):
     values["field_phone"] = "(718) 555-0142"
     values["field_authorized_rep"] = "Marisol Vance, Managing Member"
     client.post("/onboarding/profile", data=values)
+    client.post("/api/onboarding/verify")
     client.get("/api/onboarding/benefits")
 
 
@@ -265,3 +283,14 @@ def test_progress_requires_submission(client):
     login(client)
     r = client.get("/onboarding/progress/app_it636")
     assert r.status_code == 302 and "/onboarding" in r.headers["Location"]
+
+
+def test_demo_reset_route_clears_state_and_session(client, app):
+    login(client)
+    client.post("/onboarding/connect")
+    assert app.extensions["store"].onboarding["gmail_connected"] is True
+    r = client.get("/demo/reset")
+    assert r.status_code == 302 and "/signin" in r.headers["Location"]
+    assert app.extensions["store"].onboarding["gmail_connected"] is False
+    # session cleared: dashboard should redirect to sign-in
+    assert client.get("/dashboard").status_code == 302

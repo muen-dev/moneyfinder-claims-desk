@@ -34,3 +34,18 @@ Source: https://github.com/thetradingdoc/moneyfinder (read-only reference; not m
 ## Demo business
 
 `demo/gowanus-kettle/` (business, 25-message inbox, dossier profile, filled forms) is reused as claims-desk's fixture source. All synthetic; `.example` domains, `00-` EIN.
+
+
+## Verification engine (Kenan)
+
+Kenan's AI Studio app `Moneyfinder Verification Engine` provides the craft-beverage
+screener: NYS SLA license status, NYS DOS standing, NYC zoning/BBL and federal tax
+classification, then deterministic incentive pre-screens (IT-636, FICA tip, REAP).
+
+Ported as a synthetic first version:
+- `fixtures/verification.json` — registry snapshot (SLA 1314509, DOS 5201948, BBL 3004620014, M1-1 IBZ)
+- `app/services/verification.py` — resolves profile inputs + checks + incentives
+- `app/templates/verification.html` — explicit stage after profile review
+- `POST /api/onboarding/verify` — runs checks, emits `verify_*` PRISM spans
+
+Live SODA/Open Data calls are not wired in this demo; the snapshot is labeled synthetic.

@@ -1,0 +1,88 @@
+{
+  "demo_persona": "Gowanus Kettle Brewing Co. LLC",
+  "inputs": {
+    "legal_name": "Gowanus Kettle Brewing Co. LLC",
+    "address": "417 Sackett Street, Brooklyn, NY 11231",
+    "sla_license": "1314509",
+    "tax_classification": "LLC (Taxed as Partnership)"
+  },
+  "checks": [
+    {
+      "id": "sla",
+      "label": "NYS SLA registration",
+      "status": "verified",
+      "headline": "Verified active",
+      "source": "NYS Liquor Authority registry",
+      "details": [
+        ["License serial", "1314509"],
+        ["License class", "MICRO BREWER"],
+        ["Expiration", "2027-12-31"],
+        ["Article 18 status", "Eligible Distributor"]
+      ]
+    },
+    {
+      "id": "dos",
+      "label": "NYS DOS standing",
+      "status": "verified",
+      "headline": "Good standing",
+      "source": "NYS Department of State",
+      "details": [
+        ["DOS ID", "5201948"],
+        ["Entity type", "DOMESTIC LLC"],
+        ["Formation date", "2021-04-15"],
+        ["REAP 24-mo rule", "Satisfied (4+ years active)"]
+      ]
+    },
+    {
+      "id": "zoning",
+      "label": "NYC spatial zoning (BBL)",
+      "status": "verified",
+      "headline": "M1-1 Industrial",
+      "source": "NYC Open Data · BBL 3004620014",
+      "details": [
+        ["Borough-Block-Lot", "3004620014"],
+        ["Zoning district", "M1-1 Manufacturing"],
+        ["Overlay", "Southwest Brooklyn IBZ"],
+        ["REAP rate", "$3,000 / share / year"]
+      ]
+    },
+    {
+      "id": "tax",
+      "label": "Federal tax classification",
+      "status": "verified",
+      "headline": "LLC (Taxed as Partnership)",
+      "source": "Profile + entity registry",
+      "details": [
+        ["EIN", "00-4271985"],
+        ["Entity", "Domestic LLC"],
+        ["Routed form", "IT-636"],
+        ["Filing entity", "IT-204"]
+      ]
+    }
+  ],
+  "incentives": [
+    {
+      "id": "ben_it636",
+      "name": "NYS Alcoholic Beverage Production Credit",
+      "form": "IT-636",
+      "status": "Candidate match",
+      "confidence": "Verified active",
+      "amount_cents": 1347100,
+      "basis": "96,224 gal × $0.14 (3,104 barrels × 31 gal)",
+      "evidence": "Active Article 18 distributor registration + NYS production record",
+      "gap": "CPA must verify monthly Form MT-456 excise returns"
+    },
+    {
+      "id": "ben_8846",
+      "name": "Federal Employer FICA Tip Credit",
+      "form": "8846",
+      "status": "Candidate match · audit protected",
+      "confidence": "$127,200 creditable tips × 7.65%",
+      "amount_cents": 973100,
+      "basis": "$148,600 taproom tips; $127,200 creditable",
+      "evidence": "Payroll tip records + employer FICA paid",
+      "gap": "Private payroll tip ledger must be reconciled"
+    }
+  ],
+  "disclaimer": "Synthetic registry snapshot. Check status, license serial, DOS ID and BBL are fictional demo values, not a live government lookup."
+}

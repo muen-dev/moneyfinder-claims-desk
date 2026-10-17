@@ -1,0 +1,113 @@
+{% extends "base_wizard.html" %}
+{% block title %}Verify business · MoneyFinder{% endblock %}
+{% block content %}
+<section class="wizard">
+  <div class="wizard-head">
+    <a class="wordmark small" href="{{ url_for('flow.landing') }}"><span class="wordmark-glyph">M</span> MoneyFinder</a>
+    <div class="wizard-steps">
+      <span class="wstep active"><i>1</i>Inbox</span>
+      <span class="wstep"><i>2</i>Benefits</span>
+      <span class="wstep"><i>3</i>Form &amp; send</span>
+    </div>
+    <span class="wizard-user">{{ current_user.email }}</span>
+  </div>
+
+  {% if not verified %}
+  <div class="wizard-panel narrow center-panel">
+    <div class="agent-spinner" role="status" aria-label="Verifying business records"></div>
+    <p class="eyebrow">Step 1 of 3 · verification</p>
+    <h1>Verifying the business.</h1>
+    <p class="lede">The agent is checking the NYS SLA license, NYS DOS standing, NYC zoning/BBL and federal tax classification against the synthetic registry snapshot.</p>
+    <ul class="agent-log" id="verify-log">
+      <li>NYS Liquor Authority · license 1314509</li>
+      <li>NYS Department of State · DOS ID 5201948</li>
+      <li>NYC Open Data · BBL 3004620014</li>
+      <li>Federal tax classification · LLC (Taxed as Partnership)</li>
+      <li>Pre-screening statutory incentive formulas</li>
+    </ul>
+    <p class="error" id="verify-error" hidden>Verification could not finish. <a href="{{ url_for('flow.verify') }}">Retry</a>.</p>
+  </div>
+  {% else %}
+  <div class="wizard-panel wide">
+    <p class="eyebrow">Step 1 of 3 · verification</p>
+    <div class="panel-title-row">
+      <div>
+        <h1>Verified against government records.</h1>
+        <p class="lede">The business passed all four checks. These are the facts the benefit match will use.</p>
+      </div>
+      <span class="fit-badge">{{ verification.checks|selectattr('status','equalto','verified')|list|length }} / {{ verification.checks|length }} verified</span>
+    </div>
+
+    <div class="verify-inputs">
+      <div><span>Legal name</span><strong>{{ verification.inputs.legal_name }}</strong></div>
+      <div><span>Premise address</span><strong>{{ verification.inputs.address }}</strong></div>
+      <div><span>NYS SLA license</span><strong>{{ verification.inputs.sla_license }}</strong></div>
+      <div><span>Tax classification</span><strong>{{ verification.inputs.tax_classification }}</strong></div>
+    </div>
+
+    <div class="verify-grid">
+      {% for c in verification.checks %}
+      <article class="verify-card">
+        <div class="app-top">
+          <span class="chip integration verified">{{ c.headline }}</span>
+          <span class="muted">{{ c.label }}</span>
+        </div>
+        <dl class="verify-details">
+          {% for pair in c.details %}
+          <div><dt>{{ pair[0] }}</dt><dd>{{ pair[1] }}</dd></div>
+          {% endfor %}
+        </dl>
+        <p class="source-note">Source: {{ c.source }}</p>
+      </article>
+      {% endfor %}
+    </div>
+
+    <h2 class="verify-heading">Pre-screened incentive matches</h2>
+    <p class="muted">Deterministic formulas from the verified facts. A candidate match, not an eligibility decision.</p>
+    <div class="verify-incentives">
+      {% for i in verification.incentives %}
+      <article class="verify-incentive">
+        <div class="app-top">
+          <span class="form">{{ i.form }}</span>
+          <span class="chip verdict eligible">{{ i.status }}</span>
+        </div>
+        <h3>{{ i.name }}</h3>
+        <div class="benefit-meta">
+          <div><span>Estimated credit</span><strong>{{ i.amount_cents|money }}</strong></div>
+          <div><span>Basis</span><strong>{{ i.basis }}</strong></div>
+        </div>
+        <p class="muted"><strong>Evidence:</strong> {{ i.evidence }}</p>
+        <p class="needs">Open evidence: {{ i.gap }}</p>
+      </article>
+      {% endfor %}
+    </div>
+
+    <p class="source-note">{{ verification.disclaimer }}</p>
+    <div class="form-actions">
+      <form method="post" action="/api/onboarding/verify"><button class="btn ghost" type="submit">Re-verify</button></form>
+      <a class="btn primary" href="{{ url_for('flow.searching') }}">Continue to benefit search <span class="arrow">→</span></a>
+    </div>
+  </div>
+  {% endif %}
+  <p class="wizard-foot">Synthetic registry snapshot · no live agency lookup · not an eligibility decision</p>
+</section>
+{% endblock %}
+{% block scripts %}
+{% if not verified %}
+<script>
+  const items = Array.from(document.querySelectorAll('#verify-log li'));
+  let i = 0;
+  const timer = setInterval(() => { if (i < items.length) { items[i].classList.add('done'); i += 1; } }, 550);
+  setTimeout(async () => {
+    try {
+      const r = await fetch('/api/onboarding/verify', { method: 'POST' });
+      if (!r.ok) throw new Error('verify');
+      clearInterval(timer); items.forEach(el => el.classList.add('done'));
+      location.reload();
+    } catch (e) {
+      document.getElementById('verify-error').hidden = false;
+    }
+  }, 3000);
+</script>
+{% endif %}
+{% endblock %}

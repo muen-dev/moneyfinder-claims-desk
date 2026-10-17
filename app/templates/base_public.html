@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 </head>
 <body class="public">
-  <div class="banner" role="status">Synthetic demo — not tax advice. Estimates are not money received.</div>
+  <div class="banner" role="status">Synthetic demo — not tax advice. Estimates are not money received. · <a href="{{ url_for('flow.demo_reset') }}">Reset demo</a></div>
   <header class="public-nav">
     <a class="wordmark" href="{{ url_for('flow.landing') }}">
       <span class="wordmark-glyph">M</span> MoneyFinder

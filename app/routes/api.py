@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from flask import Blueprint, current_app, jsonify, request, send_file, url_for
 
-from ..services import applications, eligibility, evidence, ledger, packet, pdf_fill
+from ..services import applications, eligibility, evidence, ledger, packet, pdf_fill, verification
 from ..services.prism import Prism
 from ..services.tracing import annotate
 from ..services.nicrron import Nicrron
@@ -241,3 +241,14 @@ def onboarding_submit(benefit_id: str):
     _emit("submit", "mock_submit", app.get("confirmation_id", ""))
     _emit("status_check", "poll_status", "submitted")
     return ok(application=app)
+
+
+@bp.post("/onboarding/verify")
+def onboarding_verify():
+    s = store()
+    data = verification.results(s)
+    s.mark_verified()
+    for check in data.get("checks", []):
+        _emit(f"verify_{check['id']}", "verify_registry", f"{check['label']}: {check['headline']}")
+    _emit("verify_incentives", "pre_screen_incentives", f"{len(data.get('incentives', []))} pre-screened incentives")
+    return ok(verification=data)
