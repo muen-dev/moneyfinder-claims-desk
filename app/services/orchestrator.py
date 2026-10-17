@@ -1,11 +1,13 @@
 """Analysis orchestrator: one run = one PRISM session; every step is recorded honestly."""
 from __future__ import annotations
 
+import json
 import time
 from datetime import UTC, datetime
 
 from ..util import now_iso
 from . import eligibility, evidence, ledger, packet
+from .nicrron import Nicrron
 
 STEP_TOOLS = [
     ("gmail_scan", "scan_inbox"),
@@ -68,7 +70,25 @@ def start_run(store, prism) -> dict:
     step("reconcile_ledger", "reconcile_ledger", lambda: ledger.summary(store.ledger))
     step("program_candidates", "find_candidates", lambda: f"{len(store.programs)} programs from the catalog")
     step("agency_fetch", "fetch_program_page", lambda: f"{sum(1 for p in store.programs if p.get('source_excerpt'))} cached official pages")
-    step("eligibility_extract", "extract_eligibility", lambda: eligibility.verdicts(store)["counts"])
+    def eligibility_extract():
+        counts = eligibility.verdicts(store)["counts"]
+        nicrron = Nicrron()
+        if not nicrron.enabled:
+            return {"mode": "deterministic", "counts": counts}
+        programs = [{"id": p["id"], "verdict": p["verdict"], "excerpt": (p.get("source_excerpt") or "")[:180]}
+                    for p in store.programs]
+        result = nicrron.complete_json(
+            "You are an eligibility evidence reviewer. Return strict JSON only; never add a program id.",
+            "Programs: " + json.dumps(programs) +
+            ' Return {"eligible":[ids],"needs_info":[ids],"expired":[ids]}.',
+        )
+        valid = {p["id"] for p in store.programs}
+        data = result.get("data", {})
+        model_verdicts = {k: [i for i in v if i in valid] for k, v in data.items() if isinstance(v, list)}
+        return {"mode": "nicrron", "model": result.get("model"), "counts": counts,
+                "model_verdicts": model_verdicts}
+
+    step("eligibility_extract", "extract_eligibility", eligibility_extract)
     step("match_score", "score_match", lambda: f"{eligibility.verdicts(store)['counts'].get('eligible', 0)} eligible verdicts")
     step("form_prep", "prepare_application", lambda: f"{len(store.applications)} applications prepared")
     step("human_approve", "request_approval", lambda: "awaiting human approval before any submission", gate=True)
