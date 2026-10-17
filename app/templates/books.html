@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Books · MoneyFinder{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Books · Tax year {{ summary.year }}</p>
+    <h1>Claim-ready ledger</h1>
+    <p class="sub">Purchases and sales extracted from the same inbox, reconciled in code. Prepared for the accountant — not filed, not tax advice.</p>
+  </div>
+  <form method="post" action="{{ url_for('pages.books_packet') }}">
+    <button class="btn primary" type="submit">Prepare accountant packet</button>
+  </form>
+</section>
+
+<section class="cards six">
+  <div class="card stat"><span class="label">Revenue</span><strong>{{ summary.revenue_cents|money }}</strong></div>
+  <div class="card stat"><span class="label">Expenses</span><strong>{{ summary.expense_cents|money }}</strong></div>
+  <div class="card stat"><span class="label">Capital</span><strong>{{ summary.capital_cents|money }}</strong></div>
+  <div class="card stat"><span class="label">Net</span><strong>{{ summary.net_cents|money }}</strong></div>
+  <div class="card stat"><span class="label">Delta</span><strong>{{ summary.reconciled_delta_cents|money }}</strong></div>
+  <div class="card stat"><span class="label">Missing receipts</span><strong class="coral">{{ summary.missing_receipts }}</strong><span class="hint">{{ summary.duplicates }} duplicates merged</span></div>
+</section>
+
+<section class="split">
+  <div class="card">
+    <h2>Exceptions</h2>
+    {% if exceptions.missing_receipts %}
+      <h3 class="small-head">Missing receipts</h3>
+      <ul class="actions">
+        {% for r in exceptions.missing_receipts %}
+          <li><a href="#{{ r.id }}">{{ r.vendor }}</a><span>{{ r.amount_cents|money }} · {{ r.date }}</span></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if exceptions.duplicates %}
+      <h3 class="small-head">Duplicate candidates merged</h3>
+      <ul class="actions">
+        {% for r in exceptions.duplicates %}
+          <li><span>{{ r.vendor }} · {{ r.description }}</span><span>{{ r.amount_cents|money }} → {{ r.duplicate_of }}</span></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <p class="muted">A duplicate flag is a review candidate, never an automatic correction. No payment is cancelled or altered.</p>
+  </div>
+  <div class="card">
+    <h2>Accountant packet</h2>
+    {% if packet %}
+      <p class="muted">Generated {{ packet.generated_at[:16].replace("T"," ") }} · {{ packet.status.replace("_"," ") }}</p>
+      <ul class="files">
+        {% for f in packet.files %}
+          <li><a href="/api/ledger/packet/{{ packet.id }}/{{ f.name }}">{{ f.name }}</a><span>{{ f.kind }}</span></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No packet yet. Build one from the ledger — the totals must match this page before it generates.</p>
+      <form method="post" action="{{ url_for('pages.books_packet') }}"><button class="btn primary" type="submit">Build packet</button></form>
+    {% endif %}
+    <p class="muted">Prepared for professional review. Not filed. Not tax advice.</p>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Ledger <span class="count">{{ transactions|length }}</span></h2>
+  <div class="table-scroll">
+  <table class="table">
+    <thead><tr><th>Date</th><th>Vendor</th><th>Description</th><th class="right">Amount</th><th>Category</th><th>Source</th><th>Flag</th></tr></thead>
+    <tbody>
+    {% for t in transactions %}
+      <tr id="{{ t.id }}" class="{{ 'flagged' if t.needs_receipt else '' }}">
+        <td>{{ t.date }}</td>
+        <td>{{ t.vendor }}</td>
+        <td>{{ t.description }}</td>
+        <td class="right">{{ t.amount_cents|money }}</td>
+        <td><span class="tag">{{ t.category.replace("_"," ") }}</span></td>
+        <td class="muted">{{ t.source_message_id or "—" }}</td>
+        <td>{% if t.needs_receipt %}<span class="chip coral">missing receipt</span>{% elif t.duplicate_of %}<span class="chip">duplicate</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+{% endblock %}

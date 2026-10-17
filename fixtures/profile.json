@@ -1,0 +1,435 @@
+{
+  "business_id": "demo-gowanuskettle",
+  "generated_at": "2026-10-17T12:00:00+00:00",
+  "demo": true,
+  "facts": [
+    {
+      "key": "legal_name",
+      "label": "Legal name",
+      "value": "Gowanus Kettle Brewing Co. LLC",
+      "source_message_id": "synthetic-gk-001",
+      "source_kind": "email",
+      "confidence": 0.99,
+      "quote": "Payroll processed for Gowanus Kettle Brewing Co. LLC"
+    },
+    {
+      "key": "entity_type",
+      "label": "Entity type",
+      "value": "Domestic LLC (NY)",
+      "source_kind": "registry",
+      "confidence": 0.97,
+      "quote": "NY Department of State record"
+    },
+    {
+      "key": "naics",
+      "label": "NAICS",
+      "value": "312120 \u2014 Breweries",
+      "source_kind": "web",
+      "confidence": 0.92,
+      "quote": "Craft beer brewed on a 15-barrel brewhouse"
+    },
+    {
+      "key": "headcount",
+      "label": "Employees at year end",
+      "value": "14",
+      "source_message_id": "synthetic-gk-022",
+      "source_kind": "email",
+      "confidence": 0.95,
+      "quote": "We ended 2025 with 14 employees."
+    },
+    {
+      "key": "payroll_provider",
+      "label": "Payroll provider",
+      "value": "Gusto",
+      "source_message_id": "synthetic-gk-004",
+      "source_kind": "email",
+      "confidence": 0.99,
+      "quote": "14 employees paid. Total gross pay: $48,960.00."
+    },
+    {
+      "key": "address",
+      "label": "HQ address",
+      "value": "417 Sackett Street, Brooklyn, NY 11231",
+      "source_message_id": "synthetic-gk-012",
+      "source_kind": "email",
+      "confidence": 0.98,
+      "quote": "417 Sackett Street, Brooklyn, NY 11231"
+    },
+    {
+      "key": "ein",
+      "label": "EIN",
+      "value": "00-4271985",
+      "source_kind": "registry",
+      "confidence": 0.99,
+      "quote": "Synthetic EIN (00- prefix is never issued)"
+    },
+    {
+      "key": "veterans_hired",
+      "label": "Veteran hires (2025)",
+      "value": "2",
+      "source_message_id": "synthetic-gk-009",
+      "source_kind": "email",
+      "confidence": 0.94,
+      "quote": "Darnell dropped off his DD-214 \u2026 Keisha (Marine Corps) should start in August"
+    },
+    {
+      "key": "canning_line",
+      "label": "Canning line (placed in service)",
+      "value": "$186,500 \u00b7 July 28, 2025",
+      "source_message_id": "synthetic-gk-022",
+      "source_kind": "email",
+      "confidence": 0.98,
+      "quote": "canning line invoice ($186,500, placed in service July 28, 2025)"
+    },
+    {
+      "key": "tips",
+      "label": "Taproom tips (2025)",
+      "value": "$148,600",
+      "source_message_id": "synthetic-gk-025",
+      "source_kind": "email",
+      "confidence": 0.85,
+      "quote": "Tips collected for bartenders: $2,906 (weekly summary)"
+    },
+    {
+      "key": "barrels",
+      "label": "NY barrels brewed (2025)",
+      "value": "3,104",
+      "source_message_id": "synthetic-gk-012",
+      "source_kind": "email",
+      "confidence": 0.98,
+      "quote": "2025 calendar-year production reported in New York: 3,104 barrels of beer."
+    },
+    {
+      "key": "tax_year",
+      "label": "Tax year",
+      "value": "2025",
+      "source_message_id": "synthetic-gk-005",
+      "source_kind": "email",
+      "confidence": 0.99,
+      "quote": "Your W-2s and Form 941 filings for tax year 2025 are complete"
+    },
+    {
+      "key": "health_plan",
+      "label": "Small-group health plan",
+      "value": "Oscar via NY State of Health SHOP",
+      "source_message_id": "synthetic-gk-019",
+      "source_kind": "email",
+      "confidence": 0.96,
+      "quote": "Purchased through: NY State of Health small business marketplace (SHOP)"
+    },
+    {
+      "key": "accountant",
+      "label": "Accountant",
+      "value": "Owen Halloran CPA",
+      "source_message_id": "synthetic-gk-021",
+      "source_kind": "email",
+      "confidence": 0.97,
+      "quote": "Owen Halloran CPA \u2014 2025 tax year documents"
+    }
+  ],
+  "conflicts": [
+    {
+      "field": "headcount",
+      "label": "Headcount: 14 vs 12",
+      "profile_value": "14 (year end)",
+      "email_value": "12 (March payroll)",
+      "source_message_id": "synthetic-gk-001",
+      "note": "March payroll lists 12 employees paid; December payroll and the owner email say 14.",
+      "status": "open",
+      "options": [
+        "Use 14 (year end)",
+        "Use 12 (March)",
+        "Ask me"
+      ]
+    },
+    {
+      "field": "legal_name",
+      "label": "Legal name variant",
+      "profile_value": "Gowanus Kettle Brewing Co. LLC",
+      "email_value": "Gowanus Kettle Brewing Co.",
+      "source_message_id": "synthetic-gk-014",
+      "note": "Some vendor emails omit the 'LLC'. The registry/legal name wins for forms.",
+      "status": "open",
+      "options": [
+        "Use the LLC name",
+        "Use the short name"
+      ]
+    },
+    {
+      "field": "attachment",
+      "label": "DD-214 attachment missing",
+      "profile_value": "2 veteran hires",
+      "email_value": "DD-214 'attached' but no file record",
+      "source_message_id": "synthetic-gk-022",
+      "note": "The email says the DD-214s are attached; the mailbox has no attachment record. Collect them before filing.",
+      "status": "open",
+      "options": [
+        "Request the DD-214s",
+        "Defer"
+      ]
+    }
+  ],
+  "messages": [
+    {
+      "id": "synthetic-gk-001",
+      "sender": "Gusto <no-reply@gusto.com>",
+      "date": "2025-03-31T21:04:00+00:00",
+      "subject": "Payroll processed for Gowanus Kettle Brewing Co. LLC: Mar 16 - Mar 31, 2025",
+      "snippet": "Hi Marisol, Your payroll for Gowanus Kettle Brewing Co. LLC has been processed. Pay period: Mar 16 - Mar 31, 2025. Pay date: Apr 4, 2025. 12 employees paid. Total gross pay: $41,88",
+      "body": "Hi Marisol,\nYour payroll for Gowanus Kettle Brewing Co. LLC has been processed.\nPay period: Mar 16 - Mar 31, 2025. Pay date: Apr 4, 2025.\n12 employees paid. Total gross pay: $41,880.00. Employer taxes: $3,402.15.\nDebit from your account ending 4410 on Apr 2, 2025.\n- The Gusto team (synthetic demo message)",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-002",
+      "sender": "Gusto <no-reply@gusto.com>",
+      "date": "2025-06-02T15:20:00+00:00",
+      "subject": "Onboarding complete: Darnell Reyes",
+      "snippet": "Darnell Reyes has finished onboarding at Gowanus Kettle Brewing Co. LLC. Role: Cellar Operator. Start date: May 27, 2025. Employment type: full-time, W-2. Federal Form W-4, NY IT-2",
+      "body": "Darnell Reyes has finished onboarding at Gowanus Kettle Brewing Co. LLC.\nRole: Cellar Operator. Start date: May 27, 2025. Employment type: full-time, W-2.\nFederal Form W-4, NY IT-2104 and Form I-9 are complete.\nReminder: if this new hire qualifies for the Work Opportunity Tax Credit, Form 8850 must be filed with the NYS Department of Labor within 28 days of the start date.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-003",
+      "sender": "Gusto <no-reply@gusto.com>",
+      "date": "2025-08-19T15:45:00+00:00",
+      "subject": "Onboarding complete: Keisha Monroe",
+      "snippet": "Keisha Monroe has finished onboarding at Gowanus Kettle Brewing Co. LLC. Role: Packaging Technician (canning line). Start date: Aug 11, 2025. Employment type: full-time, W-2. Feder",
+      "body": "Keisha Monroe has finished onboarding at Gowanus Kettle Brewing Co. LLC.\nRole: Packaging Technician (canning line). Start date: Aug 11, 2025. Employment type: full-time, W-2.\nFederal Form W-4, NY IT-2104 and Form I-9 are complete.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-004",
+      "sender": "Gusto <no-reply@gusto.com>",
+      "date": "2025-12-31T22:10:00+00:00",
+      "subject": "Payroll processed for Gowanus Kettle Brewing Co. LLC: Dec 16 - Dec 31, 2025",
+      "snippet": "Your payroll for Gowanus Kettle Brewing Co. LLC has been processed. Pay period: Dec 16 - Dec 31, 2025. Pay date: Jan 2, 2026. 14 employees paid. Total gross pay: $48,960.00. Employ",
+      "body": "Your payroll for Gowanus Kettle Brewing Co. LLC has been processed.\nPay period: Dec 16 - Dec 31, 2025. Pay date: Jan 2, 2026.\n14 employees paid. Total gross pay: $48,960.00. Employer taxes: $3,977.40.\nYear-end: 14 W-2s will be filed for tax year 2025.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-005",
+      "sender": "Gusto <no-reply@gusto.com>",
+      "date": "2026-01-30T14:00:00+00:00",
+      "subject": "Your W-2s and Form 941 filings for tax year 2025 are complete",
+      "snippet": "Gusto filed 14 W-2s for Gowanus Kettle Brewing Co. LLC (EIN: 00-4271985) with the Social Security Administration for tax year 2025. Q4 2025 Form 941 and NYS-45 were filed on your b",
+      "body": "Gusto filed 14 W-2s for Gowanus Kettle Brewing Co. LLC (EIN: 00-4271985) with the Social Security Administration for tax year 2025.\nQ4 2025 Form 941 and NYS-45 were filed on your behalf.\nAnnual summary: 14 employees at year end, total 2025 wages $1,128,400.",
+      "attachments": [
+        "2025_W2_summary.pdf"
+      ],
+      "attachment_state": "available"
+    },
+    {
+      "id": "synthetic-gk-006",
+      "sender": "Indeed <no-reply@indeed.com>",
+      "date": "2025-04-22T13:30:00+00:00",
+      "subject": "New application for Cellar Operator - Gowanus Kettle Brewing Co.",
+      "snippet": "You have a new applicant for Cellar Operator (Brooklyn, NY 11231). Applicant: Darnell Reyes. Highlights: 4 years U.S. Army (92F petroleum supply specialist), honorably discharged 2",
+      "body": "You have a new applicant for Cellar Operator (Brooklyn, NY 11231).\nApplicant: Darnell Reyes. Highlights: 4 years U.S. Army (92F petroleum supply specialist), honorably discharged 2024; forklift certified.\nScreener answer: \"Are you a veteran of the U.S. Armed Forces?\" Yes.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-007",
+      "sender": "Indeed <no-reply@indeed.com>",
+      "date": "2025-05-20T16:02:00+00:00",
+      "subject": "Darnell Reyes accepted your offer - Cellar Operator",
+      "snippet": "Darnell Reyes accepted your offer letter for Cellar Operator at Gowanus Kettle Brewing Co. Start date: May 27, 2025. Hourly rate: $24.00. Next step: complete new hire paperwork in ",
+      "body": "Darnell Reyes accepted your offer letter for Cellar Operator at Gowanus Kettle Brewing Co.\nStart date: May 27, 2025. Hourly rate: $24.00.\nNext step: complete new hire paperwork in your payroll system.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-008",
+      "sender": "Indeed <no-reply@indeed.com>",
+      "date": "2025-08-05T18:12:00+00:00",
+      "subject": "Keisha Monroe accepted your offer - Packaging Technician",
+      "snippet": "Keisha Monroe accepted your offer letter for Packaging Technician at Gowanus Kettle Brewing Co. Start date: Aug 11, 2025. Hourly rate: $22.50. Candidate profile: U.S. Marine Corps ",
+      "body": "Keisha Monroe accepted your offer letter for Packaging Technician at Gowanus Kettle Brewing Co.\nStart date: Aug 11, 2025. Hourly rate: $22.50.\nCandidate profile: U.S. Marine Corps veteran (2017-2023), service-connected disability rating 30%.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-009",
+      "sender": "Marisol Vance <marisol@gowanuskettle.example>",
+      "date": "2025-05-28T19:40:00+00:00",
+      "subject": "Fwd: DD-214 and WOTC paperwork for Darnell",
+      "snippet": "Team - Darnell dropped off his DD-214 (member-4 copy) today. Filing IRS Form 8850 and ETA Form 9061 with NYS DOL this week so we stay inside the 28-day WOTC window. He's our first ",
+      "body": "Team - Darnell dropped off his DD-214 (member-4 copy) today. Filing IRS Form 8850 and ETA Form 9061 with NYS DOL this week so we stay inside the 28-day WOTC window.\nHe's our first veteran hire; Keisha (Marine Corps) should start in August if the canning line is installed on time.\nMarisol Vance, Managing Member, Gowanus Kettle Brewing Co. LLC",
+      "attachments": [
+        "DD214_redacted.pdf",
+        "Form8850_Reyes.pdf"
+      ],
+      "attachment_state": "claimed"
+    },
+    {
+      "id": "synthetic-gk-010",
+      "sender": "NYS Department of Labor <wotc@labor.ny.gov>",
+      "date": "2025-06-18T14:05:00+00:00",
+      "subject": "WOTC certification request received - Gowanus Kettle Brewing Co. LLC",
+      "snippet": "The New York State Department of Labor received Form 8850 and ETA Form 9061 for employee D. Reyes (start date 05/27/2025) from Gowanus Kettle Brewing Co. LLC, FEIN 00-4271985. Targ",
+      "body": "The New York State Department of Labor received Form 8850 and ETA Form 9061 for employee D. Reyes (start date 05/27/2025) from Gowanus Kettle Brewing Co. LLC, FEIN 00-4271985.\nTarget group claimed: Veteran (unemployed 4 weeks or more). Your request is being reviewed; a determination will be mailed.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-011",
+      "sender": "NYS Department of Taxation and Finance <noreply@tax.ny.gov>",
+      "date": "2025-09-12T13:00:00+00:00",
+      "subject": "Account update: Gowanus Kettle Brewing Co. LLC",
+      "snippet": "A new message is available in your Online Services account. Taxpayer: Gowanus Kettle Brewing Co. LLC EIN: 00-4271985 Subject: Beer production credit - 2024 claim processed. Form IT",
+      "body": "A new message is available in your Online Services account.\nTaxpayer: Gowanus Kettle Brewing Co. LLC   EIN: 00-4271985\nSubject: Beer production credit - 2024 claim processed. Form IT-636 (filed with partnership return IT-204) was accepted for tax year 2024.\nReminder: the LLC files Form IT-204 as a partnership; claim the 2025 credit on Form IT-636.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-012",
+      "sender": "NYS Department of Taxation and Finance <noreply@tax.ny.gov>",
+      "date": "2026-02-10T15:30:00+00:00",
+      "subject": "Alcoholic beverage tax return received - January 2026",
+      "snippet": "We received your monthly Beer and Wine Products tax return (MT-40) for January 2026. Registrant: Gowanus Kettle Brewing Co. LLC, 417 Sackett Street, Brooklyn, NY 11231. 2025 calend",
+      "body": "We received your monthly Beer and Wine Products tax return (MT-40) for January 2026.\nRegistrant: Gowanus Kettle Brewing Co. LLC, 417 Sackett Street, Brooklyn, NY 11231.\n2025 calendar-year production reported in New York: 3,104 barrels of beer.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-013",
+      "sender": "NYS Liquor Authority <licensing@sla.ny.gov>",
+      "date": "2025-11-03T14:45:00+00:00",
+      "subject": "License renewal approved - Microbrewer license",
+      "snippet": "The New York State Liquor Authority approved the renewal of the Microbrewer license (class MB) for Gowanus Kettle Brewing Co. LLC at 417 Sackett Street, Brooklyn, NY 11231 (Kings C",
+      "body": "The New York State Liquor Authority approved the renewal of the Microbrewer license (class MB) for Gowanus Kettle Brewing Co. LLC at 417 Sackett Street, Brooklyn, NY 11231 (Kings County).\nLicense serial no. 1319027.\nLicense term: 12/01/2025 - 11/30/2028. Retail privileges: on-premises taproom.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-014",
+      "sender": "TTB Permits Online <noreply@ttb.gov>",
+      "date": "2025-07-08T17:20:00+00:00",
+      "subject": "Brewer's Notice amendment approved",
+      "snippet": "Your amendment to Brewer's Notice BR-NY-SYNTH-0142 for Gowanus Kettle Brewing Co. LLC has been approved. Change: addition of packaging equipment (canning line) to the brewery premi",
+      "body": "Your amendment to Brewer's Notice BR-NY-SYNTH-0142 for Gowanus Kettle Brewing Co. LLC has been approved.\nChange: addition of packaging equipment (canning line) to the brewery premises at 417 Sackett Street, Brooklyn, NY.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-015",
+      "sender": "Chase for Business <no-reply@chase.com>",
+      "date": "2025-04-10T16:00:00+00:00",
+      "subject": "Equipment financing approved - Gowanus Kettle Brewing Co. LLC",
+      "snippet": "Congratulations. Your equipment financing request has been approved. Borrower: Gowanus Kettle Brewing Co. LLC. Amount: $186,500.00. Term: 60 months. Collateral: 5-head counter-pres",
+      "body": "Congratulations. Your equipment financing request has been approved.\nBorrower: Gowanus Kettle Brewing Co. LLC. Amount: $186,500.00. Term: 60 months.\nCollateral: 5-head counter-pressure canning line with depalletizer and seamer (vendor quote #Q-2025-311).\nFunds will be disbursed directly to the equipment vendor on delivery.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-016",
+      "sender": "Chase for Business <no-reply@chase.com>",
+      "date": "2025-07-25T20:15:00+00:00",
+      "subject": "Equipment financing disbursed",
+      "snippet": "Your equipment financing of $186,500.00 was disbursed to the vendor on Jul 25, 2025. The canning line was placed in service at 417 Sackett Street, Brooklyn on Jul 28, 2025 per your",
+      "body": "Your equipment financing of $186,500.00 was disbursed to the vendor on Jul 25, 2025.\nThe canning line was placed in service at 417 Sackett Street, Brooklyn on Jul 28, 2025 per your delivery acceptance.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-017",
+      "sender": "Con Edison <distributedgeneration@coned.com>",
+      "date": "2025-05-15T13:10:00+00:00",
+      "subject": "Solar interconnection: Permission to Operate - 417 Sackett St",
+      "snippet": "Con Edison has granted Permission to Operate for the 38 kW rooftop solar photovoltaic system at 417 Sackett Street, Brooklyn, NY 11231. Customer of record: Gowanus Kettle Brewing C",
+      "body": "Con Edison has granted Permission to Operate for the 38 kW rooftop solar photovoltaic system at 417 Sackett Street, Brooklyn, NY 11231.\nCustomer of record: Gowanus Kettle Brewing Co. LLC. Net metering begins with your next billing cycle.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-018",
+      "sender": "Con Edison <no-reply@coned.com>",
+      "date": "2025-10-02T12:00:00+00:00",
+      "subject": "Your Con Edison bill is ready",
+      "snippet": "Account: Gowanus Kettle Brewing Co. LLC. Service address: 417 Sackett Street, Brooklyn, NY 11231. Solar net-metering credit this cycle: 3,920 kWh. Amount due: $2,114.58.",
+      "body": "Account: Gowanus Kettle Brewing Co. LLC. Service address: 417 Sackett Street, Brooklyn, NY 11231.\nSolar net-metering credit this cycle: 3,920 kWh. Amount due: $2,114.58.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-019",
+      "sender": "Oscar for Business <noreply@oscarhealth.com>",
+      "date": "2025-01-06T15:00:00+00:00",
+      "subject": "Your small group health plan is active",
+      "snippet": "Welcome to Oscar. The small group health plan for Gowanus Kettle Brewing Co. LLC is active as of January 1, 2025. Purchased through: NY State of Health small business marketplace (",
+      "body": "Welcome to Oscar. The small group health plan for Gowanus Kettle Brewing Co. LLC is active as of January 1, 2025.\nPurchased through: NY State of Health small business marketplace (SHOP).\nEnrolled employees: 11. Employer contribution: 60% of employee-only premium.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-020",
+      "sender": "Priya Shah <priya@harborbenefits.example>",
+      "date": "2025-11-20T16:30:00+00:00",
+      "subject": "2026 renewal + Form 8941 numbers",
+      "snippet": "Hi Marisol, Your Oscar small group renewal is attached. For the 2025 small business health care tax credit (Form 8941) your accountant will need: 12.6 FTEs for 2025, average annual",
+      "body": "Hi Marisol,\nYour Oscar small group renewal is attached. For the 2025 small business health care tax credit (Form 8941) your accountant will need: 12.6 FTEs for 2025, average annual wages of about $57,200, and $68,940 in employer premium contributions through the SHOP marketplace.\nAlso confirming the SIMPLE IRA plan we set up for staff in March 2025 is live with 9 participants.\nPriya Shah, Harbor Benefits Brokerage (synthetic)",
+      "attachments": [
+        "Oscar_2026_renewal.pdf"
+      ],
+      "attachment_state": "available"
+    },
+    {
+      "id": "synthetic-gk-021",
+      "sender": "Owen Halloran CPA <owen@hallorancpa.example>",
+      "date": "2026-01-14T18:00:00+00:00",
+      "subject": "2025 tax year: documents we need for Gowanus Kettle",
+      "snippet": "Hi Marisol, We're starting the 2025 tax year return for Gowanus Kettle Brewing Co. LLC (EIN 00-4271985). The LLC files Form IT-204 (partnership) with New York and Form 1065 federal",
+      "body": "Hi Marisol,\nWe're starting the 2025 tax year return for Gowanus Kettle Brewing Co. LLC (EIN 00-4271985). The LLC files Form IT-204 (partnership) with New York and Form 1065 federally.\nPlease send: the canning line invoice and placed-in-service date (for the NYS investment tax credit, Form IT-212), barrel counts for the beer production credit (IT-636), DD-214s and NYS DOL certifications for the two veterans hired in 2025 (Hire a Veteran credit, IT-643), and the solar invoice.\nCan you confirm you're still signing as Managing Member?\nOwen Halloran, CPA - Halloran & Peck (synthetic)",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-022",
+      "sender": "Marisol Vance <marisol@gowanuskettle.example>",
+      "date": "2026-01-15T13:22:00+00:00",
+      "subject": "Re: 2025 tax year: documents we need for Gowanus Kettle",
+      "snippet": "Owen - yes, I'm signing as Managing Member. Attached: canning line invoice ($186,500, placed in service July 28, 2025), MT-40 barrel totals (3,104 bbl brewed in NY in 2025), both D",
+      "body": "Owen - yes, I'm signing as Managing Member. Attached: canning line invoice ($186,500, placed in service July 28, 2025), MT-40 barrel totals (3,104 bbl brewed in NY in 2025), both DD-214s and the DOL letters for Darnell and Keisha, and the solar contract.\nWe ended 2025 with 14 employees.\nMarisol Vance\nManaging Member, Gowanus Kettle Brewing Co. LLC\n417 Sackett Street, Brooklyn, NY 11231 | (718) 555-0142",
+      "attachments": [
+        "canning_line_invoice.pdf",
+        "MT40_2025_totals.pdf",
+        "solar_contract.pdf"
+      ],
+      "attachment_state": "claimed"
+    },
+    {
+      "id": "synthetic-gk-023",
+      "sender": "Owen Halloran CPA <owen@hallorancpa.example>",
+      "date": "2026-03-02T17:40:00+00:00",
+      "subject": "Extension filed for 2025 IT-204",
+      "snippet": "We filed an extension for the 2025 partnership return (IT-204 / Form 1065) for Gowanus Kettle Brewing Co. LLC. The credit forms (IT-636, IT-212, IT-643, Form 8941) will be prepared",
+      "body": "We filed an extension for the 2025 partnership return (IT-204 / Form 1065) for Gowanus Kettle Brewing Co. LLC. The credit forms (IT-636, IT-212, IT-643, Form 8941) will be prepared with the return by September 15, 2026.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-024",
+      "sender": "Hop Union Newsletter <news@hopsupplier.example>",
+      "date": "2026-04-03T12:00:00+00:00",
+      "subject": "Spring hop contracting is open",
+      "snippet": "Lock in your 2026 hop contracts now. Limited Citra and Mosaic availability. Unsubscribe anytime.",
+      "body": "Lock in your 2026 hop contracts now. Limited Citra and Mosaic availability. Unsubscribe anytime.",
+      "attachments": [],
+      "attachment_state": "none"
+    },
+    {
+      "id": "synthetic-gk-025",
+      "sender": "Square <receipts@squareup.com>",
+      "date": "2026-05-11T19:00:00+00:00",
+      "subject": "Weekly sales summary - Gowanus Kettle taproom",
+      "snippet": "Taproom net sales this week: $18,420. Tips collected for bartenders: $2,906. Card transactions: 1,377.",
+      "body": "Taproom net sales this week: $18,420. Tips collected for bartenders: $2,906. Card transactions: 1,377.",
+      "attachments": [],
+      "attachment_state": "none"
+    }
+  ]
+}

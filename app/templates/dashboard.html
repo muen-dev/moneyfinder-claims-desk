@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Claims Desk · MoneyFinder{% endblock %}
+{% block content %}
+{% set t = pipe.totals %}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Claims Desk</p>
+    <h1>{{ business.legal_name }}</h1>
+    <p class="sub">Every application is a receivable. Identified is an estimate; approved is agency evidence; paid means a matched deposit.</p>
+  </div>
+  <form method="post" action="{{ url_for('pages.run_analysis') }}">
+    <button class="btn primary" type="submit">Run analysis</button>
+  </form>
+</section>
+
+<section class="cards four">
+  <div class="card stat"><span class="label">Identified</span><strong>{{ t.identified_cents|money }}</strong><span class="hint">estimate, not money received</span></div>
+  <div class="card stat"><span class="label">In process</span><strong>{{ t.in_process_cents|money }}</strong><span class="hint">{{ pipe.columns.in_process|length }} application(s)</span></div>
+  <div class="card stat"><span class="label">Approved</span><strong>{{ t.approved_cents|money }}</strong><span class="hint">agency said yes · not cash</span></div>
+  <div class="card stat"><span class="label">Paid</span><strong>{{ t.paid_confirmed_cents|money }}</strong><span class="hint">deposit matched{% if t.paid_issued_cents %} · {{ t.paid_issued_cents|money }} awaiting deposit{% endif %}</span></div>
+</section>
+
+<section class="integrations">
+  {% for i in integrations %}
+    <span class="chip integration {{ i.status }}">{{ i.name }}: {{ i.status }}</span>
+  {% endfor %}
+  <span class="muted">Sponsor tools: Nicrron (model calls) · PRISM (traces) · ElevenLabs (optional)</span>
+</section>
+
+<section class="pipeline">
+  {% for key, label in [("found","Found"), ("in_process","In process"), ("approved","Approved"), ("paid","Paid")] %}
+  <div class="column">
+    <h2>{{ label }} <span class="count">{{ pipe.columns[key]|length }}</span></h2>
+    {% for app in pipe.columns[key] %}
+      <a class="app-card" href="{{ url_for('pages.application_detail', app_id=app.id) }}">
+        <div class="app-top"><span class="form">{{ app.form or "—" }}</span><span class="chip status {{ app.column }}">{{ app.status|status_label }}</span></div>
+        <h3>{{ app.program }}</h3>
+        <div class="amount">{{ app.amount_estimate_cents|money }}</div>
+        <p class="next">{{ app.next_action }}</p>
+        <span class="due">Due {{ app.deadline }}</span>
+      </a>
+    {% else %}
+      <p class="empty">Nothing here.</p>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</section>
+
+<section class="split">
+  <div class="card">
+    <h2>Recent runs</h2>
+    <table class="table compact">
+      <thead><tr><th>Run</th><th>Status</th><th>Telemetry</th><th>When</th></tr></thead>
+      <tbody>
+      {% for r in runs %}
+        <tr>
+          <td><a href="{{ url_for('pages.run_history') }}#{{ r.id }}">{{ r.id }}</a></td>
+          <td><span class="chip status {{ r.status }}">{{ r.status }}</span></td>
+          <td>{{ r.telemetry }}</td>
+          <td class="muted">{{ r.started_at[:16].replace("T"," ") }}</td>
+        </tr>
+      {% else %}<tr><td colspan="4" class="empty">No runs yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>Next actions</h2>
+    <ul class="actions">
+      <li><a href="{{ url_for('pages.onboarding') }}">Review the Gmail-derived profile</a><span>14 facts, 3 conflicts</span></li>
+      <li><a href="{{ url_for('pages.eligibility_page') }}">Check public-agency eligibility</a><span>7 programs, 1 expired</span></li>
+      <li><a href="{{ url_for('pages.books') }}">Prepare the accountant packet</a><span>39 transactions, 3 missing receipts</span></li>
+      <li><a href="{{ url_for('pages.application_detail', app_id='app_it643') }}">Sign IT-643 / upload DD-214</a><span>{{ 1507500|money }} in process</span></li>
+    </ul>
+  </div>
+</section>
+{% endblock %}

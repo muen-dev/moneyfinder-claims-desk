@@ -1,0 +1,90 @@
+[
+  {
+    "id": "app_it636",
+    "program_id": "nys_beer_production",
+    "program": "Alcoholic Beverage Production Credit",
+    "form": "IT-636",
+    "agency": "NYS Department of Taxation and Finance",
+    "amount_estimate_cents": 1347100,
+    "amount_type": "estimate",
+    "status": "MATCH_FOUND",
+    "next_action": "Confirm the 3,104-barrel count, then prepare IT-636",
+    "deadline": "2026-04-15",
+    "expected_by": null,
+    "confidence": 0.9,
+    "source_url": "https://www.tax.ny.gov/pdf/current_forms/it/it636_fill_in.pdf",
+    "evidence": [
+      {
+        "kind": "email",
+        "ref": "synthetic-gk-012",
+        "excerpt": "3,104 barrels of beer brewed in NY"
+      }
+    ]
+  },
+  {
+    "id": "app_8846",
+    "program_id": "fed_fica_tip",
+    "program": "FICA tip credit",
+    "form": "8846",
+    "agency": "IRS",
+    "amount_estimate_cents": 973100,
+    "amount_type": "estimate",
+    "status": "FORM_READY",
+    "next_action": "Confirm the tips total and approve Form 8846",
+    "deadline": "2026-04-15",
+    "expected_by": null,
+    "confidence": 0.9,
+    "source_url": "https://www.irs.gov/forms-pubs/about-form-8846",
+    "evidence": [
+      {
+        "kind": "email",
+        "ref": "synthetic-gk-025",
+        "excerpt": "Tips collected for bartenders"
+      }
+    ]
+  },
+  {
+    "id": "app_it643",
+    "program_id": "nys_hire_a_veteran",
+    "program": "Hire a Veteran Credit",
+    "form": "IT-643",
+    "agency": "NYS Department of Taxation and Finance",
+    "amount_estimate_cents": 1507500,
+    "amount_type": "estimate",
+    "status": "SUBMITTED",
+    "next_action": "Upload the DD-214s and sign IT-643",
+    "deadline": "2026-04-15",
+    "expected_by": null,
+    "confidence": 0.9,
+    "source_url": "https://www.tax.ny.gov/pdf/current_forms/it/it643_fill_in.pdf",
+    "evidence": [
+      {
+        "kind": "email",
+        "ref": "synthetic-gk-009",
+        "excerpt": "Darnell dropped off his DD-214"
+      }
+    ]
+  },
+  {
+    "id": "app_it212",
+    "program_id": "nys_investment",
+    "program": "Investment Credit",
+    "form": "IT-212",
+    "agency": "NYS Department of Taxation and Finance",
+    "amount_estimate_cents": 746000,
+    "amount_type": "estimate",
+    "status": "APPROVED",
+    "next_action": "Agency said yes \u2014 wait for the deposit and match it",
+    "deadline": "2026-04-15",
+    "expected_by": null,
+    "confidence": 0.9,
+    "source_url": "https://www.tax.ny.gov/pdf/current_forms/it/it212_fill_in.pdf",
+    "evidence": [
+      {
+        "kind": "email",
+        "ref": "synthetic-gk-015",
+        "excerpt": "Amount: $186,500.00"
+      }
+    ]
+  }
+]

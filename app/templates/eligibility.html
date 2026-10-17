@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Eligibility · MoneyFinder{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Eligibility</p>
+    <h1>Public-agency programs</h1>
+    <p class="sub">Verdicts cite the official page excerpt and the date it was read. An eligible verdict is a lead for review — not a filing decision.</p>
+  </div>
+</section>
+
+<section class="cards four">
+  {% for key, label in [("eligible","Eligible"), ("needs_info","Needs info"), ("expired","Expired"), ("not_eligible","Not eligible")] %}
+    <div class="card stat"><span class="label">{{ label }}</span><strong>{{ verdicts.counts[key] }}</strong></div>
+  {% endfor %}
+</section>
+
+<section class="program-grid">
+  {% for p in verdicts.programs %}
+  <article class="card program">
+    <div class="app-top">
+      <span class="chip verdict {{ p.verdict }}">{{ p.verdict|status_label }}</span>
+      <span class="muted">{{ p.as_of }}</span>
+    </div>
+    <h2>{{ p.name }}</h2>
+    <p class="muted">{{ p.agency }}{% if p.form %} · Form {{ p.form }}{% endif %}</p>
+    <ul class="reasons">
+      {% for r in p.reasons %}<li>{{ r }}</li>{% endfor %}
+    </ul>
+    {% if p.questions %}
+      <div class="question"><strong>One question:</strong> {{ p.questions[0] }}</div>
+    {% endif %}
+    <blockquote>{{ p.source_excerpt }}</blockquote>
+    <a class="source" href="{{ p.url }}" target="_blank" rel="noopener">Official page ↗</a>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,559 @@
+[
+  {
+    "id": "run_demo_001",
+    "case_id": "case_gowanus_2025",
+    "version": "v1",
+    "status": "succeeded",
+    "started_at": "2026-10-17T12:10:00+00:00",
+    "ended_at": "2026-10-17T12:10:09+00:00",
+    "steps": [
+      {
+        "step": "gmail_scan",
+        "tool": "scan_inbox",
+        "status": "succeeded",
+        "latency_ms": 240,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_facts",
+        "tool": "extract_facts",
+        "status": "succeeded",
+        "latency_ms": 270,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_purchases",
+        "tool": "extract_purchases",
+        "status": "succeeded",
+        "latency_ms": 300,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "categorize_ledger",
+        "tool": "categorize_ledger",
+        "status": "succeeded",
+        "latency_ms": 330,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "reconcile_ledger",
+        "tool": "reconcile_ledger",
+        "status": "succeeded",
+        "latency_ms": 360,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "program_candidates",
+        "tool": "find_candidates",
+        "status": "succeeded",
+        "latency_ms": 390,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "agency_fetch",
+        "tool": "fetch_program_page",
+        "status": "succeeded",
+        "latency_ms": 420,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "eligibility_extract",
+        "tool": "extract_eligibility",
+        "status": "succeeded",
+        "latency_ms": 450,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "match_score",
+        "tool": "score_match",
+        "status": "succeeded",
+        "latency_ms": 480,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "form_prep",
+        "tool": "prepare_application",
+        "status": "succeeded",
+        "latency_ms": 510,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "human_approve",
+        "tool": "request_approval",
+        "status": "pending",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "build_accountant_packet",
+        "tool": "build_accountant_packet",
+        "status": "succeeded",
+        "latency_ms": 570,
+        "error": null,
+        "prism_delivered": true
+      }
+    ],
+    "telemetry": "pending",
+    "prism_session_id": "run_demo_001",
+    "prism_url": null,
+    "error": null,
+    "awaiting_approval": true,
+    "summary": {
+      "facts": 14,
+      "transactions": 39,
+      "programs": 7,
+      "packet_files": 3
+    }
+  },
+  {
+    "id": "run_fail_001",
+    "case_id": "case_eligibility_v1",
+    "version": "v1",
+    "status": "failed",
+    "started_at": "2026-10-17T11:40:00+00:00",
+    "ended_at": "2026-10-17T11:40:05+00:00",
+    "steps": [
+      {
+        "step": "gmail_scan",
+        "tool": "scan_inbox",
+        "status": "succeeded",
+        "latency_ms": 240,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_facts",
+        "tool": "extract_facts",
+        "status": "succeeded",
+        "latency_ms": 270,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_purchases",
+        "tool": "extract_purchases",
+        "status": "succeeded",
+        "latency_ms": 300,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "categorize_ledger",
+        "tool": "categorize_ledger",
+        "status": "succeeded",
+        "latency_ms": 330,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "reconcile_ledger",
+        "tool": "reconcile_ledger",
+        "status": "succeeded",
+        "latency_ms": 360,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "program_candidates",
+        "tool": "find_candidates",
+        "status": "succeeded",
+        "latency_ms": 390,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "agency_fetch",
+        "tool": "fetch_program_page",
+        "status": "succeeded",
+        "latency_ms": 420,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "eligibility_extract",
+        "tool": "extract_eligibility",
+        "status": "failed",
+        "latency_ms": 820,
+        "error": "citation missing: eligibility criterion has no verbatim quote",
+        "prism_delivered": false
+      },
+      {
+        "step": "match_score",
+        "tool": "score_match",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      },
+      {
+        "step": "form_prep",
+        "tool": "prepare_application",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      },
+      {
+        "step": "human_approve",
+        "tool": "request_approval",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      },
+      {
+        "step": "build_accountant_packet",
+        "tool": "build_accountant_packet",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      }
+    ],
+    "telemetry": "pending",
+    "prism_session_id": "run_fail_001",
+    "prism_url": null,
+    "error": "eligibility_extract failed: citation missing"
+  },
+  {
+    "id": "run_fail_002",
+    "case_id": "case_eligibility_v1",
+    "version": "v1",
+    "status": "failed",
+    "started_at": "2026-10-17T11:41:00+00:00",
+    "ended_at": "2026-10-17T11:41:05+00:00",
+    "steps": [
+      {
+        "step": "gmail_scan",
+        "tool": "scan_inbox",
+        "status": "succeeded",
+        "latency_ms": 240,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_facts",
+        "tool": "extract_facts",
+        "status": "succeeded",
+        "latency_ms": 270,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_purchases",
+        "tool": "extract_purchases",
+        "status": "succeeded",
+        "latency_ms": 300,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "categorize_ledger",
+        "tool": "categorize_ledger",
+        "status": "succeeded",
+        "latency_ms": 330,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "reconcile_ledger",
+        "tool": "reconcile_ledger",
+        "status": "succeeded",
+        "latency_ms": 360,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "program_candidates",
+        "tool": "find_candidates",
+        "status": "succeeded",
+        "latency_ms": 390,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "agency_fetch",
+        "tool": "fetch_program_page",
+        "status": "succeeded",
+        "latency_ms": 420,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "eligibility_extract",
+        "tool": "extract_eligibility",
+        "status": "failed",
+        "latency_ms": 820,
+        "error": "citation missing: eligibility criterion has no verbatim quote",
+        "prism_delivered": false
+      },
+      {
+        "step": "match_score",
+        "tool": "score_match",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      },
+      {
+        "step": "form_prep",
+        "tool": "prepare_application",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      },
+      {
+        "step": "human_approve",
+        "tool": "request_approval",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      },
+      {
+        "step": "build_accountant_packet",
+        "tool": "build_accountant_packet",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      }
+    ],
+    "telemetry": "pending",
+    "prism_session_id": "run_fail_002",
+    "prism_url": null,
+    "error": "eligibility_extract failed: citation missing"
+  },
+  {
+    "id": "run_fail_003",
+    "case_id": "case_eligibility_v1",
+    "version": "v1",
+    "status": "failed",
+    "started_at": "2026-10-17T11:42:00+00:00",
+    "ended_at": "2026-10-17T11:42:05+00:00",
+    "steps": [
+      {
+        "step": "gmail_scan",
+        "tool": "scan_inbox",
+        "status": "succeeded",
+        "latency_ms": 240,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_facts",
+        "tool": "extract_facts",
+        "status": "succeeded",
+        "latency_ms": 270,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_purchases",
+        "tool": "extract_purchases",
+        "status": "succeeded",
+        "latency_ms": 300,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "categorize_ledger",
+        "tool": "categorize_ledger",
+        "status": "succeeded",
+        "latency_ms": 330,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "reconcile_ledger",
+        "tool": "reconcile_ledger",
+        "status": "succeeded",
+        "latency_ms": 360,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "program_candidates",
+        "tool": "find_candidates",
+        "status": "succeeded",
+        "latency_ms": 390,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "agency_fetch",
+        "tool": "fetch_program_page",
+        "status": "succeeded",
+        "latency_ms": 420,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "eligibility_extract",
+        "tool": "extract_eligibility",
+        "status": "failed",
+        "latency_ms": 820,
+        "error": "citation missing: eligibility criterion has no verbatim quote",
+        "prism_delivered": false
+      },
+      {
+        "step": "match_score",
+        "tool": "score_match",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      },
+      {
+        "step": "form_prep",
+        "tool": "prepare_application",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      },
+      {
+        "step": "human_approve",
+        "tool": "request_approval",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      },
+      {
+        "step": "build_accountant_packet",
+        "tool": "build_accountant_packet",
+        "status": "skipped",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": false
+      }
+    ],
+    "telemetry": "pending",
+    "prism_session_id": "run_fail_003",
+    "prism_url": null,
+    "error": "eligibility_extract failed: citation missing"
+  },
+  {
+    "id": "run_v2_001",
+    "case_id": "case_eligibility_v2",
+    "version": "v2",
+    "status": "succeeded",
+    "started_at": "2026-10-17T11:50:00+00:00",
+    "ended_at": "2026-10-17T11:50:08+00:00",
+    "steps": [
+      {
+        "step": "gmail_scan",
+        "tool": "scan_inbox",
+        "status": "succeeded",
+        "latency_ms": 240,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_facts",
+        "tool": "extract_facts",
+        "status": "succeeded",
+        "latency_ms": 270,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "extract_purchases",
+        "tool": "extract_purchases",
+        "status": "succeeded",
+        "latency_ms": 300,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "categorize_ledger",
+        "tool": "categorize_ledger",
+        "status": "succeeded",
+        "latency_ms": 330,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "reconcile_ledger",
+        "tool": "reconcile_ledger",
+        "status": "succeeded",
+        "latency_ms": 360,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "program_candidates",
+        "tool": "find_candidates",
+        "status": "succeeded",
+        "latency_ms": 390,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "agency_fetch",
+        "tool": "fetch_program_page",
+        "status": "succeeded",
+        "latency_ms": 420,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "eligibility_extract",
+        "tool": "extract_eligibility",
+        "status": "succeeded",
+        "latency_ms": 450,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "match_score",
+        "tool": "score_match",
+        "status": "succeeded",
+        "latency_ms": 480,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "form_prep",
+        "tool": "prepare_application",
+        "status": "succeeded",
+        "latency_ms": 510,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "human_approve",
+        "tool": "request_approval",
+        "status": "pending",
+        "latency_ms": 0,
+        "error": null,
+        "prism_delivered": true
+      },
+      {
+        "step": "build_accountant_packet",
+        "tool": "build_accountant_packet",
+        "status": "succeeded",
+        "latency_ms": 570,
+        "error": null,
+        "prism_delivered": true
+      }
+    ],
+    "telemetry": "pending",
+    "prism_session_id": "run_v2_001",
+    "prism_url": null,
+    "error": null
+  }
+]

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Onboarding · MoneyFinder{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Onboarding</p>
+    <h1>Learn the business from the inbox</h1>
+    <p class="sub">Connect the synthetic Gmail mailbox, review every fact with its source, resolve conflicts, then consent.</p>
+  </div>
+</section>
+
+{% if not scan %}
+<section class="card hero">
+  <h2>Connect Gmail (synthetic demo mailbox)</h2>
+  <p>25 synthetic messages · no real account, no write access. The scan extracts facts and purchases, each with a quote and a source email.</p>
+  <ul class="plain">
+    <li>Read-only scope · synthetic data only</li>
+    <li>Facts without a source are discarded</li>
+    <li>Conflicts are shown, never silently resolved</li>
+  </ul>
+  <form method="post" action="{{ url_for('pages.onboarding_scan') }}">
+    <button class="btn primary" type="submit">Scan synthetic inbox</button>
+  </form>
+</section>
+{% else %}
+<section class="cards five">
+  <div class="card stat"><span class="label">Messages</span><strong>{{ scan.stats.messages }}</strong></div>
+  <div class="card stat"><span class="label">Facts</span><strong>{{ scan.stats.facts }}</strong></div>
+  <div class="card stat"><span class="label">Purchases</span><strong>{{ scan.stats.purchases }}</strong></div>
+  <div class="card stat"><span class="label">Conflicts</span><strong class="coral">{{ scan.stats.conflicts }}</strong></div>
+  <div class="card stat"><span class="label">Missing attachments</span><strong class="coral">{{ scan.stats.missing_attachments }}</strong></div>
+</section>
+
+<section class="card">
+  <h2>What we learned — every fact has a source</h2>
+  <table class="table">
+    <thead><tr><th>Field</th><th>Value</th><th>Source</th><th>Confidence</th></tr></thead>
+    <tbody>
+    {% for f in scan.facts %}
+      <tr>
+        <td>{{ f.label }}</td>
+        <td>{{ f.value }}</td>
+        <td><span class="muted">{{ f.source_message_id or f.source_kind }}</span><br><q>{{ f.quote }}</q></td>
+        <td>{{ "%.0f"|format((f.confidence or 0) * 100) }}%</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="card">
+  <h2>Conflicts — resolve before building the desk</h2>
+  {% for c in scan.conflicts %}
+  <div class="conflict">
+    <div><strong>{{ c.label }}</strong><p>{{ c.note }}</p></div>
+    <div class="conflict-values">
+      <span>Profile: {{ c.profile_value }}</span>
+      <span>Email: {{ c.email_value }}</span>
+    </div>
+    <div class="conflict-actions">
+      {% for opt in c.options %}<button class="btn ghost small" type="button">{{ opt }}</button>{% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  <p class="muted">Buttons are demo affordances; the real flow persists each decision with the evidence reference.</p>
+</section>
+
+<section class="card consent">
+  <label><input type="checkbox"> I consent to build a claims file from this synthetic mailbox and its evidence.</label>
+  <a class="btn primary" href="{{ url_for('pages.dashboard') }}">Build my desk</a>
+</section>
+{% endif %}
+{% endblock %}

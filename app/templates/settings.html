@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Settings · MoneyFinder{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Settings</p>
+    <h1>Mode & integrations</h1>
+    <p class="sub">Demo mode uses synthetic data and cached evidence. Integrations report exactly what is configured and verified.</p>
+  </div>
+</section>
+
+<section class="split">
+  <div class="card">
+    <h2>Integrations</h2>
+    <table class="table">
+      <thead><tr><th>Tool</th><th>Status</th><th>Detail</th></tr></thead>
+      <tbody>
+      {% for i in integrations %}
+        <tr><td>{{ i.name }}</td><td><span class="chip integration {{ i.status }}">{{ i.status }}</span></td><td class="muted">{{ i.detail }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <p class="muted">Nicrron handles model calls; PRISM handles traces. A live PRISM trace is required before the PRISM link is shown.</p>
+  </div>
+  <div class="card">
+    <h2>Demo controls</h2>
+    <p>Reset restores fixtures: 4 applications, 39 transactions, 7 programs, 5 runs. It never touches Gmail or any external system.</p>
+    <form method="post" action="{{ url_for('pages.settings_reset') }}">
+      <button class="btn danger" type="submit">Reset demo state</button>
+    </form>
+    <h3 class="small-head">Mode</h3>
+    <ul class="plain">
+      <li><strong>Demo</strong> — synthetic mailbox + cached agency pages</li>
+      <li><strong>Live analysis</strong> — run emits steps through Nicrron/PRISM when configured (P1)</li>
+      <li><strong>Live mailbox</strong> — intentionally disabled; production financial data is out of scope</li>
+    </ul>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Environment</h2>
+  <ul class="plain">
+    <li>Nicrron key: {{ "configured" if nicrron_enabled else "not configured" }}</li>
+    <li>PRISM key: {{ "configured" if prism_enabled else "not configured" }}</li>
+    <li>Business: {{ business.legal_name }} · domain {{ business.domain }}</li>
+    <li>Data: all synthetic; `.env` is gitignored</li>
+  </ul>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ app.form }} · MoneyFinder{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <p class="eyebrow"><a href="{{ url_for('pages.dashboard') }}">Claims Desk</a> / {{ app.form }}</p>
+    <h1>{{ app.program }}</h1>
+    <p class="sub">{{ app.agency }} · {{ app.form }} · Status <span class="chip status {{ app.column }}">{{ app.status|status_label }}</span></p>
+  </div>
+</section>
+
+<section class="cards four">
+  <div class="card stat"><span class="label">Estimate</span><strong>{{ app.amount_estimate_cents|money }}</strong><span class="hint">not money received</span></div>
+  <div class="card stat"><span class="label">Deadline</span><strong>{{ app.deadline }}</strong></div>
+  <div class="card stat"><span class="label">Confidence</span><strong>{{ "%.0f"|format((app.confidence or 0)*100) }}%</strong></div>
+  <div class="card stat"><span class="label">Evidence items</span><strong>{{ app.evidence|length }}</strong></div>
+</section>
+
+<section class="split">
+  <div class="card">
+    <h2>Next action</h2>
+    <p class="big">{{ app.next_action }}</p>
+    <h3 class="small-head">Evidence</h3>
+    <ul class="evidence">
+      {% for e in app.evidence %}
+        <li><span class="tag">{{ e.kind }}</span> <strong>{{ e.ref }}</strong><q>{{ e.excerpt }}</q></li>
+      {% endfor %}
+    </ul>
+    <p class="muted">Official form: <a href="{{ app.source_url }}" target="_blank" rel="noopener">{{ app.form }} ↗</a></p>
+  </div>
+  <div class="card">
+    <h2>Move this application</h2>
+    {% if allowed %}
+      <form method="post" action="{{ url_for('pages.application_transition', app_id=app.id) }}" class="stack">
+        <label>Next status
+          <select name="to_status">
+            {% for s in allowed %}<option value="{{ s }}">{{ s|status_label }}</option>{% endfor %}
+          </select>
+        </label>
+        <button class="btn primary" type="submit">Apply transition</button>
+      </form>
+      <p class="muted">Only transitions in the status machine are accepted. Submission is mocked; no agency is contacted.</p>
+    {% else %}
+      <p class="muted">Terminal state. No further transitions.</p>
+    {% endif %}
+    <h3 class="small-head">Event log</h3>
+    <ul class="timeline">
+      {% for e in events %}
+        <li><span>{{ e.at[:16].replace("T"," ") }}</span> {{ e.from_status or "—" }} → <strong>{{ e.to_status }}</strong> <em>{{ e.actor }}</em></li>
+      {% else %}<li class="muted">No events yet.</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}

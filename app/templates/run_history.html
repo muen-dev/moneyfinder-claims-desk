@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Run History · MoneyFinder{% endblock %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Run History</p>
+    <h1>Every step the agent took</h1>
+    <p class="sub">Local steps are real tool executions. A PRISM link appears only when PRISM has verified the trace — never before.</p>
+  </div>
+  <form method="post" action="{{ url_for('pages.run_analysis') }}">
+    <button class="btn primary" type="submit">Run analysis</button>
+  </form>
+</section>
+
+<section class="integrations">
+  {% for i in integrations %}<span class="chip integration {{ i.status }}">{{ i.name }}: {{ i.status }}</span>{% endfor %}
+</section>
+
+{% for r in runs %}
+<section class="card run" id="{{ r.id }}">
+  <div class="run-head">
+    <div>
+      <h2>{{ r.id }} <span class="chip status {{ r.status }}">{{ r.status }}</span></h2>
+      <p class="muted">Version {{ r.version }} · {{ r.started_at[:16].replace("T"," ") }} · {{ r.steps|length }} steps</p>
+    </div>
+    <div class="run-meta">
+      <span class="chip integration {{ r.telemetry }}">telemetry: {{ r.telemetry }}</span>
+      {% if r.prism_url %}<a href="{{ r.prism_url }}" target="_blank" rel="noopener">Verified PRISM link ↗</a>
+      {% else %}<span class="muted">PRISM link: pending verification</span>{% endif %}
+    </div>
+  </div>
+  {% if r.error %}<p class="error">{{ r.error }}</p>{% endif %}
+  <details>
+    <summary>Steps ({{ r.steps|length }})</summary>
+    <table class="table compact">
+      <thead><tr><th>#</th><th>Step</th><th>Tool</th><th>Status</th><th>Latency</th><th>PRISM</th><th>Error</th></tr></thead>
+      <tbody>
+      {% for s in r.steps %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ s.step }}</td>
+          <td class="muted">{{ s.tool }}</td>
+          <td><span class="chip status {{ s.status }}">{{ s.status }}</span></td>
+          <td>{{ s.latency_ms }} ms</td>
+          <td>{{ "delivered" if s.prism_delivered else "—" }}</td>
+          <td class="muted">{{ s.error or "" }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </details>
+</section>
+{% else %}
+<section class="card"><p>No runs yet. Run the analysis to create one.</p></section>
+{% endfor %}
+{% endblock %}
