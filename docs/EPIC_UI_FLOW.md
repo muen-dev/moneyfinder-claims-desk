@@ -1,7 +1,7 @@
 # Epic 03 — Landing, Demo Auth & the 3-Phase Agent Onboarding
 
 **MONEY TALKS 2 · Money Operations · October 17, 2026**
-**Repo:** https://github.com/muen-dev/moneyfinder-claims-desk · **Scope:** front-end flow + thin server state
+**Repo:** https://github.com/muen-dev/hackathon-lab · **Scope:** front-end flow + thin server state
 **Design:** [DESIGN.md](../DESIGN.md) · **Builds on:** the working Claims Desk scaffold (fixtures, claims pipeline, ledger, PRISM emitter)
 
 > **Goal:** a first-time small-business owner can go from a landing page to a signed-in, profile-complete, benefit-selected, form-submitted state in one guided path — with the agent doing the work at every step and the human approving the money-moving moments.

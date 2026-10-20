@@ -79,6 +79,6 @@ PRISM is required by the event, so the app emits to it on every real run — but
 
 ## Sharing
 
-- **Stable code link:** https://github.com/muen-dev/moneyfinder-claims-desk
+- **Stable code link:** https://github.com/muen-dev/hackathon-lab
 - **Live demo:** local `http://127.0.0.1:8000`, or a temporary `cloudflared` tunnel for the team. The tunnel URL is not committed because it expires.
 - **Run locally:** `make setup && make run` (see README).

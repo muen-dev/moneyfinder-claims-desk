@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: moneyfinder-claims-desk
+    name: hackathon-lab
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt

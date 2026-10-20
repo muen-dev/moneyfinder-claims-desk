@@ -1,6 +1,6 @@
 # MoneyFinder Claims Desk
 
-**Live demo:** https://moneyfinder-claims-desk.vercel.app
+**Live demo:** https://hackathon-lab.vercel.app
 
 **MONEY TALKS 2 · Money Operations track · October 17, 2026**
 
@@ -52,7 +52,7 @@ Then go to `/signin` (or `/onboarding`) and run the flow again.
 
 ## Team access
 
-- **Repo:** https://github.com/muen-dev/moneyfinder-claims-desk
+- **Repo:** https://github.com/muen-dev/hackathon-lab
 - **Branches:** `feat/thuy-onboarding-prism` · `feat/kenan-desk-books` · `feat/richard-ledger-agent`
 - **Docs:** [PRD](docs/PRD.md) · [Epic](docs/EPIC.md) · [Contract](docs/CONTRACT.md) · [Team plan](docs/TEAM_PLAN.md) · [Architecture](docs/ARCHITECTURE.md)
 - **Live demo:** run `make run` at http://127.0.0.1:8000, or ask Thuy for the current temporary tunnel link.

@@ -6,7 +6,7 @@ that does not depend on this laptop's tunnel, deploy the Flask app to a small we
 ## Render (recommended)
 
 1. Push this repo to GitHub.
-2. Render → **New Web Service** → connect `muen-dev/moneyfinder-claims-desk`.
+2. Render → **New Web Service** → connect `muen-dev/hackathon-lab`.
 3. Runtime: **Python**. Render reads `render.yaml`:
    - Build: `pip install -r requirements.txt`
    - Start: `gunicorn "app:create_app()" --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120`
@@ -39,8 +39,8 @@ vercel link
 vercel deploy --prod
 ```
 
-Project: `moneyfinder-claims-desk` under Thuy Pham's projects.
-Live: https://moneyfinder-claims-desk.vercel.app
+Project: `hackathon-lab` under Thuy Pham's projects.
+Live: https://hackathon-lab.vercel.app
 
 ## Caveats
 

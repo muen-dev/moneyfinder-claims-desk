@@ -1,4 +1,4 @@
-# Reuse map — `thetradingdoc/moneyfinder` → `moneyfinder-claims-desk`
+# Reuse map — `thetradingdoc/moneyfinder` → `hackathon-lab`
 
 Source: https://github.com/thetradingdoc/moneyfinder (read-only reference; not modified).
 
